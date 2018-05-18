@@ -33,7 +33,6 @@ mkdir /home/data
 	ln -s /data/wwwroot /www/
 	mkdir -p /data/wwwroot/{web,log,mysql_log}
 	mkdir /data/conf
-	mkdir /data/mysql
 	mkdir /data/conf/sites-available
 	mkdir /data/software
 	mkdir /backup
@@ -90,7 +89,7 @@ mysqladmin -uroot password $Mysql_Password
 mysql -p $Mysql_Password -e"delete  from mysql.user where user="";"
 mysql -p $Mysql_Password -e"flush privileges;"
 
-systemctl stop mysql
+#systemctl stop mysql
 #配置文件目录设置######################################################################
 #移动mysql配置文件
 if [ -s /data/conf/my.cnf ]; then  
