@@ -1,9 +1,9 @@
 [client] 
-port            = $Mysql_Port
+port            = 61920
 socket          = /tmp/mysql.sock 
   
 [mysqld] 
-port            = $Mysql_Port
+port            = 61920
 socket          = /tmp/mysql.sock 
 skip-external-locking 
 key_buffer_size = 256M 
@@ -20,10 +20,10 @@ thread_concurrency = 8
 log-bin=mysql-bin 
 binlog_format=mixed 
 server-id      = 1
-datadir = /data/mysql/$Mysql_Port/data 
-innodb_data_home_dir = /data/mysql/$Mysql_Port/data 
+datadir = /data/mysql/61920/data 
+innodb_data_home_dir = /data/mysql/61920/data 
 innodb_data_file_path = ibdata1:10M:autoextend 
-innodb_log_group_home_dir = /data/mysql/$Mysql_Port/data 
+innodb_log_group_home_dir = /data/mysql/61920/data 
 innodb_buffer_pool_size = 256M 
 innodb_additional_mem_pool_size = 20M 
 innodb_log_file_size = 64M 
