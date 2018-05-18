@@ -24,9 +24,12 @@ Mysql_Password=123456
 
 ##########################################################
 
-
-
-
+#解锁系统文件-非必须
+chattr -i /etc/passwd
+chattr -i /etc/group
+chattr -i /etc/gshadow
+chattr -i /etc/shadow
+chattr -i /etc/services
 
 ### 1.安装开发环境
 ### 安装编译源码所需要工具及库
