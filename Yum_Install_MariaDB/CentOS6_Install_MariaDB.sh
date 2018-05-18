@@ -113,64 +113,8 @@ else
   echo "mysql database move success"  
 fi
 
-#修改mysql配置
-echo "
-[client]
-port		= $MYSQL_PORY
-socket		= /var/lib/mysql/mysql.sock
-[mysqld]
-port		= $MYSQL_PORY
-socket		= /var/lib/mysql/mysql.sock
-
-#skip-name-resolve
-expire_logs_days=10
-
-slow-query-log=1
-slow-query-log-file=/data/wwwroot/mysql_log/slowQuery.log
-long-query-time=1 
-log-slow-admin-statements
-
-skip-external-locking
-key_buffer_size = 100M
-max_allowed_packet = 1M
-table_open_cache = 1024
-sort_buffer_size = 2M
-read_buffer_size = 2M
-read_rnd_buffer_size = 8M
-myisam_sort_buffer_size = 64M
-thread_cache_size = 8
-query_cache_size = 32M
-#thread_concurrency应设为CPU核数的2倍
-#thread_concurrency = 8
-log-bin=mysql-bin
-
-server-id	= 1
-
-binlog_format=mixed
-
-max_connections = 2000
-interactive_timeout = 30
-wait_timeout = 30
-tmp_table_size=300M
-max_heap_table_size=300M
-
-[mysqldump]
-quick
-max_allowed_packet = 16M
-
-[mysql]
-no-auto-rehash
-
-
-[myisamchk]
-key_buffer_size = 256M
-sort_buffer_size = 256M
-read_buffer = 2M
-write_buffer = 2M
-
-[mysqlhotcopy]
-interactive-timeout
- "> /data/conf/my.cnf
+#my.cnf配置#########################################################################
+wget -O /data/conf/my.cnf https://raw.githubusercontent.com/funet8/MYSQL/master/my.cnf/my$MYSQL_PORY.cnf
 
 #开启防火墙
 iptables -I INPUT -p tcp --dport $MYSQL_PORY -j ACCEPT

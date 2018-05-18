@@ -85,60 +85,8 @@ chown -R mysql:mysql /usr/local/mysql/
 
 
 ### 7.拷贝配置文件并修改
-
 cp /data/software/mariadb-10.0.35/support-files/my-large.cnf /etc/my.cnf
-echo "
-[client] 
-port            = $Mysql_Port
-socket          = /tmp/mysql.sock 
-  
-[mysqld] 
-port            = $Mysql_Port
-socket          = /tmp/mysql.sock 
-skip-external-locking 
-key_buffer_size = 256M 
-max_allowed_packet = 1M 
-table_open_cache = 256
-sort_buffer_size = 1M 
-read_buffer_size = 1M 
-read_rnd_buffer_size = 4M 
-myisam_sort_buffer_size = 64M 
-thread_cache_size = 8
-query_cache_size= 16M 
-thread_concurrency = 8
-  
-log-bin=mysql-bin 
-binlog_format=mixed 
-server-id      = 1
-datadir = /data/mysql/$Mysql_Port/data 
-innodb_data_home_dir = /data/mysql/$Mysql_Port/data 
-innodb_data_file_path = ibdata1:10M:autoextend 
-innodb_log_group_home_dir = /data/mysql/$Mysql_Port/data 
-innodb_buffer_pool_size = 256M 
-innodb_additional_mem_pool_size = 20M 
-innodb_log_file_size = 64M 
-innodb_log_buffer_size = 8M 
-innodb_flush_log_at_trx_commit = 2
-innodb_lock_wait_timeout = 50
-innodb_file_per_table = ON 
-skip_name_resolve = ON 
-  
-[mysqldump] 
-quick 
-max_allowed_packet = 16M 
-  
-[mysql] 
-no-auto-rehash 
-  
-[myisamchk] 
-key_buffer_size = 128M 
-sort_buffer_size = 128M 
-read_buffer = 2M 
-write_buffer = 2M 
-  
-[mysqlhotcopy] 
-interactive-timeout
-" > /etc/my.cnf
+wget -O /data/conf/my.cnf https://raw.githubusercontent.com/funet8/MYSQL/master/my.cnf/my61920_Source_Package.cnf
 
 ### 8.初始化mysql
 /data/software/mariadb-10.0.35/scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql/ --datadir=/data/mysql/61920/data/ --defaults-file=/etc/my.cnf

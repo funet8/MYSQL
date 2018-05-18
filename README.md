@@ -6,7 +6,7 @@
 
 github地址： https://github.com/funet8/MYSQL
 说明
-| -| - |
+| 1 | 1|
 |---|---|
 | 系统 | Centos6 |
 | 端口 | 61920 |
