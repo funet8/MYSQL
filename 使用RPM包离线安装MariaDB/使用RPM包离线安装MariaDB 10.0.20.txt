@@ -1,0 +1,251 @@
+mariadb官方下载：
+https://downloads.mariadb.org/
+yum下载：
+https://downloads.mariadb.org/mariadb/repositories/#mirror=tuna
+
+##################################################速度太慢
+Here is your custom MariaDB YUM repository entry for CentOS. Copy and paste it into a file under /etc/yum.repos.d/ (we suggest naming the file MariaDB.repo or something similar).
+
+#vi /etc/yum.repos.d/MariaDB.repo
+写入一下内容：
+# MariaDB 10.2 CentOS repository list - created 2017-12-02 07:12 UTC
+# http://downloads.mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.2/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+
+After the file is in place, install MariaDB with:
+
+yum install -y MariaDB-server MariaDB-client
+
+If you haven't already accepted the MariaDB GPG key, you will be prompted to do so. See "Installing MariaDB with yum" for detailed information.
+
+chkconfig --levels 235 mysql on
+/etc/init.d/mysql start
+mysql_secure_installation
+
+#移动mysql配置文件
+if [ -s /data/conf/my.cnf ]; then  
+  echo "my.cnf already move"  
+else  
+	cp -p /etc/my.cnf /etc/my.cnf.bak
+	mv /etc/my.cnf /data/conf/
+	ln -s /data/conf/my.cnf /etc/
+	echo "my.cnf move success"  
+fi
+
+#移动mysql数据库
+if [ -d /data/mysql ]; then  
+  echo "mysql database already move"  
+else  
+  cp -rp /var/lib/mysql /var/lib/mysql-bak
+  mv /var/lib/mysql /data/
+  ln -s /data/mysql /var/lib/
+  echo "mysql database move success"  
+fi
+
+
+#################################################
+
+
+1. 进入MariaDB官网下载MariaDB需要的RPM包, 下载地址: http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/
+2. 使用下载软件下载所需要的RPM包, 总共4个, 并上传到CentOS主机指定目录.
+http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/MariaDB-10.0.28-centos6-x86_64-server.rpm
+http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/MariaDB-10.0.28-centos6-x86_64-client.rpm
+http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/MariaDB-10.0.28-centos6-x86_64-common.rpm
+http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/MariaDB-10.0.28-centos6-x86_64-compat.rpm
+
+首先先上传RPM包
+mkdir -p /data/software/
+cd /data/software/
+#wget 或者下载到本地 sz
+wget http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/MariaDB-10.0.28-centos6-x86_64-server.rpm
+wget http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/MariaDB-10.0.28-centos6-x86_64-client.rpm
+wget http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/MariaDB-10.0.28-centos6-x86_64-common.rpm
+wget http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/MariaDB-10.0.28-centos6-x86_64-compat.rpm
+
+1.安装依赖包：
+yum -y install libaio perl perl-DBI perl-Module-Pluggable perl-Pod-Escapes perl-Pod-Simple perl-libs perl-version
+
+2.移除所有原有的mysql软件包
+yum remove mysql* MariaDB*
+rm -rf /data/conf/my.cnf
+rm -f /var/lib/mysql
+rm -rf /var/lib/mysql-bak
+rm -rf /data/mysql
+
+3.创建用户和用户组
+groupadd mysql
+useradd -g mysql mysql -s /bin/false
+
+4. 进入RPM包目录位置, 安装MariaDB
+rpm -i /data/software/MariaDB*
+chown -R mysql.mysql  /var/lib/mysql/*
+chkconfig mysql on
+service mysql start
+
+#配置mysql
+mysql_secure_installation
+
+#创建网站相关目录####################################################################
+if [ ! -e /www ] 
+then 
+	
+	mkdir /home/data
+	ln -s /home/data /data
+	
+	mkdir /www
+	mkdir /data/wwwroot
+	ln -s /data/wwwroot /www/
+	mkdir -p /data/wwwroot/log/{other,mysql}
+	mkdir /data/conf
+
+	mkdir /backup
+	ln -s /backup /data/
+fi 
+
+
+#移动mysql配置文件
+if [ -s /data/conf/my.cnf ]; then  
+  echo "my.cnf already move"  
+else  
+	cp -p /etc/my.cnf /etc/my.cnf.bak
+	mv /etc/my.cnf /data/conf/
+	ln -s /data/conf/my.cnf /etc/
+	echo "my.cnf move success"  
+fi
+
+#移动mysql数据库
+if [ -d /data/mysql ]; then  
+  echo "mysql database already move"  
+else  
+  cp -rp /var/lib/mysql /var/lib/mysql-bak
+  mv /var/lib/mysql /data/
+  ln -s /data/mysql /var/lib/
+  echo "mysql database move success"  
+fi
+
+#开启防火墙
+/sbin/iptables -I INPUT -p tcp --dport 61920 -j ACCEPT
+/etc/rc.d/init.d/iptables save
+/etc/init.d/iptables restart
+#所有服务
+/etc/init.d/mysql restart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+参考：
+http://my.oschina.net/zhuxianwen/blog/474406
+
+
+
+
+
+
+
+
+(一) 安装编译器cmake
+[root@localhost ~]# yum -y  install make apr* autoconf automake curl curl-devel gcc gcc-c++ gtk+-devel zlib-devel openssl openssl-devel pcre-devel gd kernel keyutils patch perl kernel-headers compat*  cpp glibc libgomp libstdc++-devel keyutils-libs-devel libsepol-devel libselinux-devel krb5-devel  libXpm* freetype freetype-devel freetype* fontconfig fontconfig-devel  libjpeg* libpng* php-common php-gd gettext gettext-devel ncurses* libtool* libxml2 libxml2-devel patch policycoreutils bison (安装编译工具，各种库)
+[root@localhost cmake-2.8.7]# tar -zxvf cmake-2.8.7.tar.gz 
+[root@localhost cmake-2.8.7]# cd cmake-2.8.7
+[root@localhost cmake-2.8.7]# ./configure 
+[root@localhost cmake-2.8.7]# make
+[root@localhost cmake-2.8.7]# make install
+(二) 编译安装MariaDB之前准备工作
+[root@localhost cmake-2.8.7]# yum -y install openssl-devel ncurses-devel bison（其他相应的包在编译mariadb时报相应的错误再去安装 注意：如果第一次编译时出现错误应该直接 rm -f CMakeCache.txt  再重新编译）
+[root@localhost cmake-2.8.7]# groupadd mysql (添加mysql用户组)
+[root@localhost cmake-2.8.7]# useradd -g mysql mysql -s /bin/false (添加mysql用户)
+[root@localhost cmake-2.8.7]# mkdir -p /data/mysql (存放数据库目录)
+[root@localhost cmake-2.8.7]# chown mysql:mysql /data/mysql
+[root@localhost cmake-2.8.7]# mkdir -p /data/apps/mysql/	(创建mysql的安装目录)
+
+(三) 编译安装MariaDB
+[root@localhost software]# tar -zxvf mariadb-10.0.15.tar.gz 
+[root@localhost software]# cd mariadb-10.0.15
+[root@localhost mariadb-10.0.12-linux-x86_64]# /usr/local/bin/cmake . -DCMAKE_INSTALL_PREFIX=/data/apps/mysql/ (安装目录) -DMYSQL_DATADIR=/data/mysql/(数据库存放目录) -DSYSCONFDIR=/data/conf/ (配置文件存放目录)
+
+cmake . -DCMAKE_INSTALL_PREFIX=/data/apps/mysql/ -DMYSQL_DATADIR=/data/mysql/ -DSYSCONFDIR=/data/conf/
+
+
+
+
+
+http://blog.csdn.net/tongzidane/article/details/46009083
+
+1.mariadb下载：
+https://downloads.mariadb.org/
+
+
+2、安装编译器cmake   
+#yum -y install cmake
+
+安装特定的开发包
+#yum -y install readline-devel zlib-devel openssl-dev
+
+mkdir /data/mysql/
+groupadd mysql
+useradd -g mysql mysql -s /bin/false
+chown mysql:mysql -R /data/mysql
+
+cmake . -DMYSQL_DATADIR=/data/mysql/ -DSYSCONFDIR=/data/conf/
+
+
+cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/mydata/data/ -DSYSCONFDIR=/etc -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_ARCHIVE_STPRAGE_ENGINE=1      -DWITH_BLACKHOLE_STORAGE_ENGINE=1 -DWIYH_READLINE=1 -DWIYH_SSL=system -DVITH_ZLIB=system -DWITH_LOBWRAP=0 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
