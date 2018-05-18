@@ -33,7 +33,7 @@ yum -y remove  MariaDB*
 #是否创建目录############################################################################
 if [ $Filedir_yes = "0" ]
 then
-mkdir /home/data
+	mkdir /home/data
 	ln -s /home/data /data
 	mkdir /data
 	mkdir /www
@@ -113,6 +113,7 @@ else
 fi
 
 #my.cnf配置#########################################################################
+#wget -O /data/conf/my.cnf https://raw.githubusercontent.com/funet8/MYSQL/master/my.cnf/my61920.cnf
 wget -O /data/conf/my.cnf https://raw.githubusercontent.com/funet8/MYSQL/master/my.cnf/my$MYSQL_PORY.cnf
 
 #开启防火墙
