@@ -74,7 +74,7 @@ echo '# MariaDB 10.2 CentOS repository list - created 2017-12-01 11:36 UTC
 # http://downloads.mariadb.org/mariadb/repositories/
 [mariadb]
 name = MariaDB
-baseurl = https://mirrors.ustc.edu.cn/mariadb/yum/10.2/centos7-amd64
+baseurl = https://mirrors.ustc.edu.cn/mariadb/yum/10.2/centos6-amd64/
 gpgkey=https://mirrors.ustc.edu.cn/mariadb/yum/RPM-GPG-KEY-MariaDB
 gpgcheck=1'>/etc/yum.repos.d/MariaDB.repo
 
