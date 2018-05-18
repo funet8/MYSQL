@@ -146,7 +146,7 @@ interactive-timeout
 ### 9.启动服务
 
 cp /data/software/mariadb-10.0.35/support-files/mysql.server /etc/rc.d/init.d/mysqld 
-chmod +x /etc/rc.d/init.d/mysqld  
+chmod +x /etc/rc.d/init.d/mysqld
 chkconfig --add mysqld 
 service mysqld start
 
@@ -168,12 +168,6 @@ cp -p /etc/my.cnf /etc/my.cnf.bak
 mv /etc/my.cnf /data/conf/
 ln -s /data/conf/my.cnf /etc/
 echo "my.cnf move success"
-
-#移动mysql数据库#########################################################################
-  cp -rp /var/lib/mysql /var/lib/mysql-bak
-  mv /var/lib/mysql /data/
-  ln -s /data/mysql /var/lib/
-  echo "mysql database move success" 
 
 #防火墙#########################################################################
 /sbin/iptables -I INPUT -p tcp --dport $MYSQL_PORY -j ACCEPT
