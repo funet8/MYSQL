@@ -16,7 +16,19 @@ github地址： https://github.com/funet8/MYSQL
 
 
 ### 1.yum安装MariaDB
+源码包安装MariaDB-10.2.X ，在centos6下测试成功
 使用方法：
+```
+# wget https://github.com/funet8/MYSQL/raw/master/Yum_Install_MariaDB/CentOS6_Install_MariaDB.sh
+修改变量
+# sh CentOS6_Install_MariaDB.sh
+```
+centos7
+```
+# wget https://github.com/funet8/MYSQL/raw/master/Yum_Install_MariaDB/CentOS7_Install_MariaDB.sh
+修改变量
+# sh CentOS6_Install_MariaDB.sh
+```
 
 ### 2.使用RPM包离线安装MariaDB
 源码包安装MariaDB-10.0.28 ，在centos6下测试成功
