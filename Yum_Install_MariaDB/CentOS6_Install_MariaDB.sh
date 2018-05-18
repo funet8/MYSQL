@@ -16,36 +16,41 @@
 #
 # -------------------------------------------------------------------------------
 
-#变量定义#############################################################################
-#IS_VPS=1 #是否是虚拟主机
-#PMA_URL='lac138.zhts.pma' #phpMyAdmin访问地址
-MYSQL_PORY='61920' #MySQL访问端口
-DONE="\e[0;32m\033[1mdone\e[m" 
+####变量定义####
+MYSQL_PORY='61920'  #MySQL访问端口
+Filedir_yes='0' 	#是否创建web目录
+Mysql_Password='123456' # mysql root密码
+
 #解锁系统文件#########################################################################
 chattr -i /etc/passwd 
 chattr -i /etc/group
 chattr -i /etc/shadow
 chattr -i /etc/gshadow
 chattr -i /etc/services
-#如果已安装Apache和PHP，则卸载########################################################
-yum -y remove httpd* php*  mysql
-#更新软件库###########################################################################
-yum -y update
-#安装epel源###########################################################################
-if [ ! -e /etc/yum.repos.d/epel.repo ] 
-then 
-	rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm 1>/dev/null 
-	rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
-	echo -e "Install EPEL source ${DONE}." 
-fi 
-#安装RPMforge源，用于安装phpMyAdmin###################################################
-if [ ! -e /etc/yum.repos.d/rpmforge.repo ] 
-then 
-	rpm -Uvh http://packages.sw.be/rpmforge-release/rpmforge-release-0.5.2-2.el6.rf.x86_64.rpm 1>/dev/null 
-	rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-rpmforge-dag
-	echo -e "Install EPEL source ${DONE}." 
-fi 
-#为PHP5取得MySQL支持和安装PHP常用库###################################################
+#MariaDB,则卸载########################################################
+yum -y remove  MariaDB*
+
+#是否创建目录############################################################################
+if [ $Filedir_yes = "0" ]
+then
+mkdir /home/data
+	ln -s /home/data /data
+	mkdir /data
+	mkdir /www
+	mkdir /data/wwwroot
+	ln -s /data/wwwroot /www/
+	mkdir -p /data/wwwroot/{web,log,mysql_log}
+	mkdir /data/conf
+	mkdir /data/mysql
+	mkdir /data/conf/sites-available
+	mkdir /data/software
+	mkdir /backup
+	ln -s /backup /data/
+	#/data/wwwroot/mysql_log为慢查询日志目录
+	chown mysql.mysql -R /data/wwwroot/mysql_log
+fi
+
+#安装支持###################################################
 yum -y install libaio perl perl-DBI perl-Module-Pluggable perl-Pod-Escapes perl-Pod-Simple perl-libs perl-version php-mysql php-gd
 
 #Importing the MariaDB Signing Key####################################################
@@ -80,29 +85,14 @@ yum -y install MariaDB-server MariaDB-client
 chkconfig --levels 235 mysql on
 #start MariaDB########################################################################
 /etc/init.d/mysql start
+### 设置mysql root账号初始密码 $Mysql_Password
+mysqladmin -uroot password $Mysql_Password
 
-#目录设置############################################################################
-#创建网站相关目录####################################################################
-if [ $Filedir_yes = "0" ]
-then
-mkdir /home/data
-	ln -s /home/data /data
-	mkdir /data
-	mkdir /www
-	mkdir /data/wwwroot
-	ln -s /data/wwwroot /www/
-	mkdir -p /data/wwwroot/{web,log,mysql_log}
-	mkdir /data/conf
-	mkdir /data/mysql
-	mkdir /data/conf/sites-available
-	mkdir /data/software
-	mkdir /backup
-	ln -s /backup /data/
-fi
+### mysql命令行中删除匿名账户
+mysql -p $Mysql_Password -e"delete  from mysql.user where user="";"
+mysql -p $Mysql_Password -e"flush privileges;"
 
-#配置文件目录设置######################################################################
-chown mysql.mysql -R /data/wwwroot/mysql_log
-
+/etc/init.d/mysql stop
 #移动mysql配置文件
 if [ -s /data/conf/my.cnf ]; then  
   echo "my.cnf already move"  
@@ -124,12 +114,12 @@ else
 fi
 
 #修改mysql配置
-echo '
+echo "
 [client]
-port		= 61920
+port		= $MYSQL_PORY
 socket		= /var/lib/mysql/mysql.sock
 [mysqld]
-port		= 61920
+port		= $MYSQL_PORY
 socket		= /var/lib/mysql/mysql.sock
 
 #skip-name-resolve
@@ -180,13 +170,12 @@ write_buffer = 2M
 
 [mysqlhotcopy]
 interactive-timeout
- '> /data/conf/my.cnf
+ "> /data/conf/my.cnf
 
 #开启防火墙
-/sbin/iptables -I INPUT -p tcp --dport $MYSQL_PORY -j ACCEPT
+iptables -I INPUT -p tcp --dport $MYSQL_PORY -j ACCEPT
 /etc/rc.d/init.d/iptables save
 /etc/init.d/iptables restart
-
 
 #重启mysql
 /etc/init.d/mysql restart
