@@ -1,0 +1,117 @@
+mysql5.6部分参数解释
+ #mysql 5.6
+[client]
+port            = 3306
+socket          = /opt/mysql/data/mysql.sock
+#default-character-set=utf8
+
+[mysqld]
+port            = 3306
+socket          = /opt/mysql/data/mysql.sock
+skip-external-locking
+#跳过外部锁定
+skip-name-resolve
+#禁用dns解析
+character_set_server = utf8
+#数据库级的字符集
+##skip-grant-tables
+#在启动mysql时不启动grant-tables，授权表。有什么用呢？当然是忘记管理员密码后有用。
+key_buffer_size = 256M
+#设置索引块(index blocks)缓存的大小,它被所有线程共享,严格说是它决定了数据库索.
+max_allowed_packet = 16M
+#限制Server接受的数据包大小,该值设置过小将导致单个记录超过限制后写入数据库失败，且后续记录写入也将失败。
+table_open_cache = 1024
+#表描述符缓存大小，可减少文件打开/关闭次数.
+net_buffer_length = 8K
+#TCP/IP和套接字通信缓冲区大小,默认16k
+sort_buffer_size = 4M
+#是一个connection级参数，在每个connection（session）第一次需要使用这个buffer的时候，一次性分配设置的内存，并不是越大越好，
+#由于是connection级的参数，过大的设置+高并发可能会耗尽系统内存资源。例如：500个连接将会消耗 500*sort_buffer_size(8M)=4G内存
+read_buffer_size = 4M
+#读入缓冲区大小
+read_rnd_buffer_size = 16M
+#随机读（查询操作）缓冲区大小
+myisam_sort_buffer_size = 64M
+#MyISAM表发生变化时重新排序所需的缓冲
+
+
+
+thread_cache_size = 300
+#服务器线程缓存这个值表示可以重新利用保存在缓存中线程的数量
+thread_concurrency = 16
+#设置thread_concurrency的值的正确与否, 对mysql的性能影响很大, 在多个cpu(或多核)的情况下，错误设置了thread_concurrency的值, #会导致mysql不能充分利用多cpu(或多核), 出现同一时刻只能一个cpu(或核)在工作的情况。thread_concurrency应设为CPU核数的2倍. #比如有一个双核的CPU, 那么thread_concurrency的应该为4; 2个双核的cpu, thread_concurrency的值应为8
+completion_type=1
+#用来控制事务结束后的行为，将completion_type设置成1，第一次通过commit work来insert这条记录。
+#之后insert 2的时候并没有启用begin（start transaction）来开启一个事务，之后再插入一条重复的记录2，这时会抛出异常rollback后，最后发现只有1这样一条记录，2并没有被insert进去。因为completion_type为1的时候，commit work会开启另外一个事务，因此2个insert语句是在同一个事务里面的，所以回滚后就没有insert进去。
+wait_timeout = 120
+
+interactive_timeout = 360
+
+log-bin=mysql_log_bin
+log-bin-index=mysql_log_bin.index
+sync_binlog=1
+binlog_format=mixed
+server-id       = 022017
+relay-log=mysql_relay_log
+relay-log-index=mysql_relay_log.index
+#binlog-do-db=luckmoney
+
+innodb_data_home_dir = /opt/mysql/data
+#innodb_data_file_path = ibdata1:12M;ibdata2:100G;ibdata3:100G:autoextend
+
+innodb_log_buffer_size = 8M 
+#表示InnoDB写入到磁盘上的日志文件时使用的缓冲区的字节数，默认值为8M。
+innodb_buffer_pool_size = 8192M
+#表示缓冲池字节大小，InnoDB缓存表和索引数据的内存区域。mysql默认的值是128M。
+#最大值与你的CPU体系结构有关，在32位操作系统，最大值是 4294967295 (2^32-1) ，在64 位操作系统，最大值为18446744073709551615 (2^64-1)。在32位操作系统中，CPU和操作系统实用的最大大小低于设置的最大值。如果设定的缓冲池的大小大于1G，设置innodb_buffer_pool_instances的值大于1，在服务器繁忙的时候可以提高伸缩性，不过在实际的测试中，发现带来的性能提升并不明显。
+innodb_additional_mem_pool_size = 64M
+#这个参数用来设置 InnoDB 存储的数据目录信息和其它内部数据结构的内存池大小。
+innodb_log_file_size = 256M
+#如果对 Innodb 数据表有大量的写入操作，
+#那么选择合适的 innodb_log_file_size 值对提升MySQL性能很重要。然而设置太大了，就会增加恢复的时间，因此在MySQL崩溃或者突然断电等情况会令MySQL服务器花很长时间来恢复
+innodb_flush_log_at_trx_commit = 1
+#在每个事务提交时，日志缓冲被写到日志文件，对日志文件做到磁盘操作的刷新。分为0，1，2，
+#0：日志缓冲每秒一次地被写到日志文件，并且对日志文件做到磁盘操作的刷新，但是在一个事务提交不做任何操作。
+#1：在每个事务提交时，日志缓冲被写到日志文件，对日志文件做到磁盘操作的刷新。
+#2: 在每个提交，日志缓冲被写到文件，但不对日志文件做到磁盘操作的刷新，对日志文件每秒刷新一次
+innodb_lock_wait_timeout = 5
+#InnoDB数据库引擎增加了参数innodb_lock_wait_timeout，避免在资源有限的情况下产生太多的锁等待；innodb_lock_wait_timeout指的是事务等待获取资源等待的最长时间，超过这个时间还未分配到资源则会返回应用失败；
+innodb_flush_method = O_DIRECT
+#控制着innodb数据文件及redo log的打开、刷写模式。有三个值：fdatasync(默认)，O_DSYNC，O_DIRECT
+#默认是fdatasync，调用fsync()去刷数据文件与redo log的buffer
+#为O_DSYNC时，innodb会使用O_SYNC方式打开和刷写redo log,使用fsync()刷写数据文件
+#为O_DIRECT时，innodb使用O_DIRECT打开数据文件，使用fsync()刷写数据文件跟redo log
+open_files_limit = 65535
+max_connections = 5000
+innodb_file_per_table=1
+#  1表示启用独立表空间时，0表示关闭
+expire_logs_days = 5
+# 日志保存天数
+log_queries_not_using_indexes = on
+# 打开未建索引日志记录
+long_query_time= 1
+#慢查询时间
+slow_query_log = on
+#慢查询日志打开
+
+rpl_semi_sync_master_enabled=1  
+rpl_semi_sync_master_timeout=1000  
+rpl_semi_sync_master_trace_level=32  
+rpl_semi_sync_master_wait_no_slave=on
+rpl_semi_sync_slave_enabled=1  
+
+relay_log_purge=0
+#如果默认情况 relay_log_purge=1 时，SQL 线程就会自动将之前的 relay log 全部删除。而当 relay_log_purge=0 时，旧的 relay log 则会被保留。
+
+[mysqldump]
+quick
+max_allowed_packet = 16M
+[mysql]
+no-auto-rehash
+[myisamchk]
+key_buffer_size = 128M
+sort_buffer_size = 128M
+read_buffer = 2M
+write_buffer = 2M
+[mysqlhotcopy]
+interactive-timeout
