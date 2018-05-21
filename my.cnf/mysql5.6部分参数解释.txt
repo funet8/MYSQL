@@ -1,5 +1,4 @@
-mysql5.6部分参数解释
- #mysql 5.6
+#mysql 5.6
 [client]
 port            = 3306
 socket          = /opt/mysql/data/mysql.sock

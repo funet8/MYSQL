@@ -5,8 +5,11 @@
 本文中 所提到的Mysql与Mariadb相同
 
 github地址： https://github.com/funet8/MYSQL
+
 说明
+
 系统：Centos6 or 7 
+
 mysql端口 ：61920 
 
 
@@ -58,27 +61,37 @@ sh Source_Package_Install_MariaDB.sh
 ## 二、mysql优化技术
 
 
+
 ## 三、数据库主从配置
+[数据库主从配置](https://github.com/funet8/MYSQL/wiki/Mysql%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%25E4%25B8%25BB%25E4%25BB%258E%25E9%2585%258D%25E7%25BD%25AE)
 
 
 ## 四、SQL常用语句
 
 
-## 五、数据库高可用方案
-### Mycat 数据库中间件
+## 五、数据库备份
+
+### xtrabackup
+
+
+## 六、数据库高可用方案
+### 1.Mycat 数据库中间件
 https://github.com/funet8/MYSQL/tree/master/High_Availability/MyCat
 
-### MHA Keepalived
+### 2.MHA Keepalived
 https://github.com/funet8/MYSQL/tree/master/High_Availability/MHA_Keepalived
+在centos6.9+mariadb-10.0.28搭建未成功，出现“Error happend on checking configurations. Use of uninitialized value in string”报错。
+### 3.Mysql-MMM
+https://github.com/funet8/MYSQL/tree/master/High_Availability/Mysql-MMM
 
-### Haproxy Keepalived MySQL
+### 4.Haproxy Keepalived MySQL
 https://github.com/funet8/MYSQL/tree/master/High_Availability/Haproxy_Keepalived_MySQL
 
-### MariaDB Galera Cluster
+### 5.MariaDB Galera Cluster
 https://github.com/funet8/MYSQL/tree/master/High_Availability/MariaDB_Galera_Cluster
 
 
-## 六、相关知识点
+## 七、相关知识点
 [数据库脑裂](https://github.com/funet8/MYSQL/wiki/%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%25E8%2584%2591%25E8%25A3%2582)
 
 [DDL，DML和DCL的区别与理解](https://github.com/funet8/MYSQL/wiki/DDL%EF%BC%8CDML%E5%92%8CDCL%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E7%90%86%E8%A7%A3)
