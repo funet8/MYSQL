@@ -27,7 +27,7 @@ vm05 | mysql slave | MariaDB-10.0.35 | --- | MHA-node | 192.168.1.5 | -
 ### 2.配置hosts环境
 
 2.各个节点之间需通过主机名可互相通信，所有主机/etc/hosts文件添加
-在vm01上操作：
+在vm02上操作：
 ```
 echo "192.168.1.2 vm02 mha.mysqlmha.com
 192.168.1.3 vm03 mysql.mysqlmha.com
