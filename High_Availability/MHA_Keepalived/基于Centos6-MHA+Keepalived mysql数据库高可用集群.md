@@ -16,10 +16,9 @@ vm03 | mysql master| MariaDB-10.0.35 | Keepalived v1.2 | MHA-node | 192.168.1.3 
 vm04 | mysql slave | MariaDB-10.0.35 | Keepalived v1.2 | MHA-node | 192.168.1.4 | (备主)
 vm05 | mysql slave | MariaDB-10.0.35 | --- | MHA-node | 192.168.1.5 | -
 **VIP地址：192.168.1.8**
-
 **ssh端口为60920**
-
 **mysql端口为:61920**
+
 # 具体安装步骤
 ## 一、配置mysql半同步方式
 ### 1.安装mysql（vm03、vm04、vm05上安装）
@@ -110,6 +109,13 @@ MariaDB [(none)]> change master to master_host='192.168.1.3',master_user='replus
 MariaDB [(none)]> start slave; 
 MariaDB [(none)]> show slave status\G
 ```
+两台从库上执行：
+```
+# mysql -p123456 -e 'set global read_only=1'
+# mysql -p123456 -e 'set global relay_log_purge=0'
+```
+(有时候，我们希望将 MySQL 的 relay log 多保留一段时间，比如用于高可用切换后的数据补齐，于是就会设置 relay_log_purge=0，禁止 SQL 线程在执行完一个 relay log 后自动将其删除。)
+
 ### 6、配置keepalived高可用VIP
 在master(vm03)及备用master(vm04)节点安装keepalived
 ```
@@ -173,9 +179,7 @@ service keepalived restart
 https://downloads.mariadb.com/MHA/
 https://pan.baidu.com/s/1b4JxE2
 本次安装 mha4mysql-manager-0.53.tar.gz 和 mha4mysql-node-0.53.tar.gz 
-
-
-vm02上执行安装 mha4mysql-manager
+### vm02上执行先安装node，再安装manager
 
 ```
 rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
@@ -184,21 +188,10 @@ yum makecache
 rpm --import /etc/pki/rpm-gpg/*
 ```
 
-安装MHA manager
+1.vm02上安装MHA node
 ```
 #安装依耐项
-yum -y install  perl-DBD-mysql perl-Config-Tiny perl-Log-Dispatch perl-Parallel-ForkManager perl-Config-IniFiles ncftp perl-Params-Validate perl-CPAN perl-TEST-MOCK-LWP.noarch perl-LWP-Authen-Negotiate.noarch perl-devel perl-ExtUtils-CBuilder perl-ExtUtils-MakeMaker
-
-wget https://raw.githubusercontent.com/funet8/MYSQL/master/High_Availability/MHA_Keepalived/mha4mysql-manager-0.53.tar.gz
-tar -zxvf mha4mysql-manager-0.53.tar.gz 
-cd mha4mysql-manager-0.53
-perl Makefile.PL 
-make && make install
-```
-安装MHA node
-```
-#安装依耐项
-yum -y install  perl-DBD-mysql perl-Config-Tiny perl-Log-Dispatch perl-Parallel-ForkManager perl-Config-IniFiles ncftp perl-Params-Validate perl-CPAN perl-TEST-MOCK-LWP.noarch perl-LWP-Authen-Negotiate.noarch perl-devel perl-ExtUtils-CBuilder perl-ExtUtils-MakeMaker
+yum -y install  perl-DBD-mysql perl-Config-Tiny perl-Log-Dispatch perl-Parallel-ForkManager perl-Config-IniFiles ncftp perl-Params-Validate perl-CPAN perl-Test-Mock-LWP.noarch perl-LWP-Authen-Negotiate.noarch perl-devel perl-ExtUtils-CBuilder perl-ExtUtils-MakeMaker
 
 wget https://raw.githubusercontent.com/funet8/MYSQL/master/High_Availability/MHA_Keepalived/mha4mysql-node-0.53.tar.gz
 tar -zxvf mha4mysql-node-0.53.tar.gz 
@@ -206,15 +199,34 @@ cd mha4mysql-node-0.53
 perl Makefile.PL 
 make && make install
 ```
+2.vm02上安装MHA manager
+```
+#安装依耐项
+yum -y install  perl-DBD-mysql perl-Config-Tiny perl-Log-Dispatch perl-Parallel-ForkManager perl-Config-IniFiles ncftp perl-Params-Validate perl-CPAN perl-Test-Mock-LWP.noarch perl-LWP-Authen-Negotiate.noarch perl-devel perl-ExtUtils-CBuilder perl-ExtUtils-MakeMaker
 
-vm2 MHA manager节点上操作
+wget https://raw.githubusercontent.com/funet8/MYSQL/master/High_Availability/MHA_Keepalived/mha4mysql-manager-0.53.tar.gz
+tar -zxvf mha4mysql-manager-0.53.tar.gz 
+cd mha4mysql-manager-0.53
+perl Makefile.PL 
+make && make install
+```
+
+3.vm2 MHA manager节点上操作
 ```
 mkdir /etc/masterha/
-mkdir -p /master/app1
-mkdir -p /scripts
-cp /root/mha4mysql-manager-0.53/samples/scripts/* /scripts
+mkdir -p /data/master/app1
+cp /root/mha4mysql-manager-0.53/samples/scripts/* /usr/local/bin/
 cp /root/mha4mysql-manager-0.53/samples/conf/* /etc/masterha
 ```
+4.建立软链
+```
+ln -s /usr/local/mysql/bin/mysqlbinlog /usr/bin/mysqlbinlog
+ln -s /usr/local/mysql/bin/mysql /usr/bin/mysql
+```
+5.安装manager的时候需要将node和manager同时都安装上。
+6.关闭两边防火墙和selinux 
+7.vim /usr/local/bin/master_ip_failover +88 将 FIXME_xxx;注释
+
 MHA软件由两部分组成，Manager工具包和Node工具包，具体的说明如下。
 Manager工具包主要包括以下几个工具：
 ```
@@ -226,7 +238,6 @@ masterha_master_monitor         检测master是否宕机
 masterha_master_switch          控制故障转移（自动或者手动）
 masterha_conf_host              添加或删除配置的server信息
 ```
-
 修改配置
 ```
 # vi /etc/masterha/app1.cnf
@@ -258,23 +269,18 @@ hostname=192.168.1.5
 ssh_port=60920
 port=61920
 ```
-```
-vi /etc/masterha/masterha_default.cnf
-将#heartbeat_interval=3 注释掉
-```
-
 
 测试ssh，显示passed successfully信息就成功。
 ```
-# masterha_check_ssh --global_conf=/etc/masterha/masterha_default.cnf --conf=/etc/masterha/app1.cnf
+# masterha_check_ssh --conf=/etc/masterha/app1.cnf
 ... ...
 Tue May 15 17:02:03 2018 - [info] All SSH connection tests passed successfully.
 
  masterha_check_ssh --conf=/etc/masterha/app1.cnf
 ```
-测试MYSQL
+验证复制状态失败
 ```
-# masterha_check_repl --global_conf=/etc/masterha/masterha_default.cnf --conf=/etc/masterha/app1.cnf
+# masterha_check_repl --conf=/etc/masterha/app1.cnf
 ... ...
 MySQL Replication Health is NOT OK!
 ```
@@ -292,7 +298,9 @@ Fri May 18 19:13:27 2018 - [info] Got exit code 1 (Not master dead).
 MySQL Replication Health is NOT OK!
 ```
 
-**一直优化修改/etc/masterha/app1.cnf排错，找不到原因！ 欲哭无泪，测试了一周时间都是这样。。。麻痹**
+**一直优化修改/etc/masterha/app1.cnf排错，找不到原因！测试了一周时间都是这样。。。麻痹**
+http://www.mamicode.com/info-detail-2001166.html
+https://www.2cto.com/database/201504/389797.html
 
 
 
