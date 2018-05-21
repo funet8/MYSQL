@@ -1,0 +1,6 @@
+
+MySQL/MariaDB基于MMM实现读写分离及高可用
+http://www.178linux.com/5598
+
+使用mysql-mmm实现MySQL高可用集群
+https://blog.csdn.net/kingofworld/article/details/40041421

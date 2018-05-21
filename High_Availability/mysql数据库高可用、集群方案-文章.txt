@@ -1,0 +1,90 @@
+高性能、高可用、可扩展的MySQL集群如何组建？
+https://www.zhihu.com/question/21307639
+
+
+几种MySQL高可用方案整理
+https://blog.csdn.net/u013399093/article/details/70597712
+
+
+MySQL高可用架构之MHA
+https://www.cnblogs.com/gomysql/p/3675429.html
+
+
+MySQL高可用架构PXC（Percona XtraDB Cluster）
+https://www.linuxidc.com/Linux/2017-05/143519.htm
+
+http://www.ttlsa.com/mysql/percona-xtradb-cluster-mysql/
+
+
+MMM实现MySQL高可用详解
+https://www.linuxidc.com/Linux/2018-01/150364.htm
+
+
+
+MySQL实现高可用架构之MHA
+https://www.linuxidc.com/Linux/2017-11/149007.htm
+
+
+
+DDL，DML和DCL的区别与理解
+1、DML（data manipulation language 数据库操作语言）： 它们是SELECT、UPDATE、INSERT、DELETE，就象它的名字一样，这4条命令是用来对数据库里的数据进行操作的语言 。
+2、DDL（data definition language 数据定义语言
+）： DDL比DML要多，主要的命令有CREATE、ALTER、DROP等，DDL主要是用在定义或改变表（TABLE）的结构，数据类型，表之间的链接和约束等初始化工作上，他们大多在建立表时使用 。
+3、DCL（Data Control Language 数据控制语言
+）： 是数据库控制功能。是用来设置或更改数据库用户或角色权限的语句，包括（grant,deny,revoke等）语句。在默认状态下，只有sysadmin,dbcreator,db_owner或db_securityadmin等人员才有权力执行DCL。
+
+数据库脑裂：
+在“双机热备”高可用（HA）系统中，当联系2个节点的“心跳线”断开时，本来为一整体、动作协调的HA系统，就分裂成为2个独立的个体。由于相互失去了联系，都以为是对方出了故障，2个节点上的HA软件像“裂脑人”一样，“本能”地争抢“共享资源”、争起“应用服务”，就会发生严重后果：或者共享资源被瓜分、2边“服务”都起不来了；或者2边“服务”都起来了，但同时读写“共享存储”，导致数据损坏（常见如数据库轮询着的联机日志出错）。
+
+在涉及到高可用性时，经常会听到”脑裂“，到底啥是”脑裂“？
+一句话：当两（多）个节点同时认为自已是唯一处于活动状态的服务器从而出现争用资源的情况，这种争用资源的场景即是所谓的“脑裂”（split-brain）或”区间集群“（partitioned cluster）。
+
+
+半同步复制
+MySQL半同步复制
+http://www.cnblogs.com/phpstudy2015-6/p/6525275.html
+何为半同步复制模式呢：
+在此我们先了解异步复制模式，这是MySQL的默认复制选项。异步复制即是master数据库把binlog日志发送给slave数据库，然后就没有了然后了。在此暴露一个问题，当slave服务器发生故障了，那么肯定会导致主从数据库服务器的数据不一致。
+
+为了解决上面的问题，MySQL5.5引入一种叫做半同步复制模式。开启这种模式，可以保证slave数据库接收完master数据库发送过来的binlog日志并写入自己的中继日志中，然后反馈给master数据库，告知已经复制完毕。
+
+
+
+
+
+
+MySQL优化步骤
+ MySql优化的一般步骤：
+
+1.通过show status 命令了解各种sql的执行效率
+
+2. 定位执行效率较低的SQL语句（dql出现问题的概率较dml的大）
+
+3.通过explain分析低效率的SQL语句的执行情况
+
+4.确定问题并采取相应的优化措施
+
+     
+参考这篇文章 http://www.mycodes.net/77/2963.htm
+
+
+
+
+
+MySQL主从同步，监控从库运行状态脚本
+https://user.qzone.qq.com/573009114/blog/1423233450
+
+安装glusterFS
+https://user.qzone.qq.com/573009114/blog/1452047410
+
+
+
+
+
+
+
+
+
+
+
+
