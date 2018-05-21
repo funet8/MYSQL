@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE mycat:schema SYSTEM "schema.dtd">
+<mycat:schema xmlns:mycat="http://io.mycat/">
+        <!-- 定义一个MyCat的模式，逻辑数据库名称 -->
+        <!-- “ checkSQLschema ”：描述的是当前的连接是否需要检测数据库的模式,设置为true时。可能会出现报错。 -->
+        <!-- “ sqlMaxLimit ”：表示返回的最大的数据量的行数 -->
+        <!-- dataNode="dn1"：该操作使用的数据节点是dn1的逻辑名称 -->
+		
+		
+	<schema name="7477_com_home" checkSQLschema="false" sqlMaxLimit="100" dataNode="dn1"/>
+	<schema name="7477_com_uc" checkSQLschema="false" sqlMaxLimit="100" dataNode="dn2"/>
+		
+		<!--name属性:逻辑表名称，跟数据库中 create table 一样。-->
+		<!--dataNode:定义逻辑表所在的dataNode，改属性的值需要与DataNode标签中的name属性对应-->
+		<!--primaryKey属性:逻辑表对应的真实主键-->
+	<!--<schema name="7477_com_home" checkSQLschema="false" sqlMaxLimit="100" dataNode="dn1">	
+		<table name="travelrecord" dataNode="dn1,dn2" rule="auto-sharding-long"/>
+	</schema>-->
+
+
+		
+        <!-- 定义数据的操作节点 -->
+        <!-- “ dataHost="localhost1" ”：定义数据节点的逻辑名称 -->
+        <!-- “ database="7477_com_uc" ”：定义数据节点要使用的数据库名称 -->
+	<dataNode name="dn1" dataHost="localhost1" database="7477_com_home" />
+	<dataNode name="dn2" dataHost="localhost1" database="7477_com_uc" />
+
+		
+        <!-- 定义数据节点，包括了各种逻辑项的配置 -->
+		<!--name="localhost1"：唯一表示dataHost标签-->
+		<!--balance属性:0 不开启读写分离；1 全部readHost和可用的writeHost都参与select语句的负载均衡；2 所有操作都随机的在writeHost和readhost上分发；3 所有操作都随机的在writeHost和readhost上分发，writehost不负担读压力-->
+		<!--writeType="0" 所有写都发送到writehost1上，如果writehost1挂掉，则切换到writehost2上，writehost1恢复之后，不再切回来，还是已writehost2为准;1 所有些都随机发送到配置的writehost上-->
+		<!--switchType 属性: 1 默认，自动切换; 	-1 不自动切换	2 表示基于mysql主从状态是否切换	3 表示基于 mysql Galary Cluster的切换机制-->
+		<!--slaveThreshold 主从的延迟在多少秒以内，则把读请求分发到这个从节点，否则不往这个节点分发，假设生产环境能容忍的主从延时为60秒，则设置此值为60，此例中设置值为100-->
+		
+        <dataHost name="localhost1" maxCon="1000" minCon="10" balance="1" writeType="0" dbType="mysql" dbDriver="native" switchType="1"  slaveThreshold="100">
+            <!-- 配置真实MySQL与MyCat的心跳 -->
+            <heartbeat>select user()</heartbeat>
+            <!-- 配置真实的MySQL的连接路径 -->
+           <writeHost host="hostM1" url="192.168.1.3:61920" user="root" password="123456">
+				<readHost host="hostS2" url="192.168.1.4:61920" user="root" password="123456" />
+			</writeHost>
+        </dataHost>
+</mycat:schema>

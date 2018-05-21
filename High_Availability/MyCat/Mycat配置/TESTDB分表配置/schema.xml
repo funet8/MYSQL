@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE mycat:schema SYSTEM "schema.dtd">
+<mycat:schema xmlns:mycat="http://io.mycat/">
+        <!-- 定义一个MyCat的模式，逻辑数据库名称TestDB -->
+        <!-- “ checkSQLschema ”：描述的是当前的连接是否需要检测数据库的模式 -->
+        <!-- “sqlMaxLimit”：表示返回的最大的数据量的行数 -->
+        <!-- “dataNode="dn1"”：该操作使用的数据节点是dn1的逻辑名称 -->
+		
+	<schema name="7477_com_home" checkSQLschema="false" sqlMaxLimit="100" dataNode="dn1"/>
+	<schema name="7477_com_uc" checkSQLschema="false" sqlMaxLimit="100" dataNode="dn2"/>
+	
+	<schema name="TESTDB" checkSQLschema="false" sqlMaxLimit="100">
+		<table name="users" primaryKey="id"  dataNode="node_db01" />   
+		<table name="item" primaryKey="id" dataNode="node_db02,node_db03,node_db04" rule="role3" /> 
+	</schema>  
+
+		
+        <!-- 定义数据的操作节点 -->
+        <!-- “dataHost="localhost1"”：定义数据节点的逻辑名称 -->
+        <!-- “database="7477_com_uc"”：定义数据节点要使用的数据库名称 -->
+	<dataNode name="dn1" dataHost="localhost1" database="7477_com_home" />
+	<dataNode name="dn2" dataHost="localhost1" database="7477_com_uc" />
+	
+	
+	<!-- 设置dataNode 对应的数据库,及 mycat 连接的地址dataHost -->  
+	<dataNode name="node_db01" dataHost="dataHost01" database="db01" />  
+	<dataNode name="node_db02" dataHost="dataHost02" database="db02" />  
+	<dataNode name="node_db03" dataHost="dataHost03" database="db03" />  
+	<dataNode name="node_db04" dataHost="dataHost02" database="db04" />  
+	
+		
+        <!-- 定义数据节点，包括了各种逻辑项的配置 -->
+        <dataHost name="localhost1" maxCon="1000" minCon="10" balance="1" writeType="0" dbType="mysql" dbDriver="native" switchType="1"  slaveThreshold="100">
+            <!-- 配置真实MySQL与MyCat的心跳 -->
+            <heartbeat>select user()</heartbeat>
+            <!-- 配置真实的MySQL的连接路径 -->
+            	<writeHost host="hostM1" url="192.168.1.3:61920" user="root" password="123456">
+			<readHost host="hostS2" url="192.168.1.4:61920" user="root" password="123456" />
+		</writeHost>
+        </dataHost>
+	
+	<!-- mycat 逻辑主机dataHost对应的物理主机.其中也设置对应的mysql登陆信息 -->  
+	<dataHost name="dataHost01" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native">
+                <heartbeat>select user()</heartbeat>
+                <writeHost host="server1" url="192.168.1.3:61920" user="root" password="123456"/>
+        </dataHost>
+	<dataHost name="dataHost02" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native">  
+		<heartbeat>select user()</heartbeat>  
+		<writeHost host="server2" url="192.168.1.4:61920" user="root" password="123456"/>    
+	</dataHost>
+	<dataHost name="dataHost03" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native">
+                <heartbeat>select user()</heartbeat>
+                <writeHost host="server3" url="192.168.1.6:61920" user="root" password="123456"/>
+        </dataHost>
+		
+</mycat:schema>
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mycat:server SYSTEM "server.dtd">
+<mycat:server xmlns:mycat="http://io.mycat/">
+    <system>
+		<property name="serverPort">8066</property>
+		<property name="bindIp">0.0.0.0</property> 
+		<property name="charset">utf8</property>		
+		<property name="defaultSqlParser">druidparser</property>
+    </system>
+    <user name="root">
+        <property name="password">123456</property>
+        <property name="schemas">7477_com_home,7477_com_uc</property>
+    </user>
+
+    <user name="user">
+        <property name="password">user</property>
+        <property name="schemas">7477_com_home,7477_com_uc</property>
+        <property name="readOnly">true</property>
+		<!--连接数 默认为0，不限制。-->
+		<property name="benchmark">1000</property>
+		<!--是否开启加密。默认0，不加密。1为加密-->
+		<property name="usingDecrypt">1</property>
+    </user>
+</mycat:server>

@@ -1,0 +1,285 @@
+/data/mycat/bin/mycat start 启动
+/data/mycat/bin/mycat stop 停止
+/data/mycat/bin/mycat console 前台运行
+
+/data/mycat/bin/mycat restart 重启服务
+/data/mycat/bin/mycat pause 暂停
+/data/mycat/bin/mycat status 查看启动状态
+
+mysql -umycat -pmycat -P8066 -h127.0.0.1
+
+mysql -uroot -p123456 -P8066 -h127.0.0.1
+
+mysql -uuser -puser -P8066 -h127.0.0.1
+
+
+mysql -utest -ptest -P8066 -h127.0.0.1
+
+mysql -utest -ptest -P9066 -h127.0.0.1
+
+
+
+<?xml version="1.0"?>  
+<!DOCTYPE mycat:schema SYSTEM "schema.dtd">  
+<mycat:schema xmlns:mycat="http://io.mycat/">  
+
+    <!-- 设置表的存储方式.schema name="TESTDB" 与 server.xml中的 TESTDB 设置一致  -->  
+    <schema name="TESTDB" checkSQLschema="false" sqlMaxLimit="100">  
+        <table name="users" primaryKey="id"  dataNode="node_db01" />  
+        <table name="item" primaryKey="id" dataNode="node_db02,node_db03" rule="role1" />  
+
+    </schema>  
+
+    <!-- 设置dataNode 对应的数据库,及 mycat 连接的地址dataHost -->  
+    <dataNode name="node_db01" dataHost="dataHost01" database="db01" />  
+    <dataNode name="node_db02" dataHost="dataHost01" database="db02" />  
+    <dataNode name="node_db03" dataHost="dataHost01" database="db03" />  
+
+    <!-- mycat 逻辑主机dataHost对应的物理主机.其中也设置对应的mysql登陆信息 -->  
+    <dataHost name="dataHost01" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native">  
+            <heartbeat>select user()</heartbeat>  
+            <writeHost host="server1" url="192.168.1.3:61920" user="root" password="123456"/> 
+			<writeHost host="server2" url="192.168.1.4:61920" user="root" password="123456"/>  
+			<writeHost host="server3" url="192.168.1.6:61920" user="root" password="123456"/>  			
+    </dataHost>  
+</mycat:schema>
+
+
+
+
+
+
+insert into item(id,value,indate) values(1,100,now()),(2,200,now()),(3,300,now()),(4,400,now()),(5,500,now()),(6,600,now()),(7,700,now()),(8,800,now()),(9,900,now()),(10,1000,now());
+
+
+insert into item(id,value,indate) values(11,100,now()),(12,200,now()),(13,300,now()),(14,400,now()),(15,500,now()),(16,600,now()),(17,700,now()),(18,800,now()),(19,900,now()),(20,1000,now());
+
+insert into item(id,value,indate) values(21,100,now()),(22,200,now()),(23,300,now()),(24,400,now()),(25,500,now()),(26,600,now()),(27,700,now()),(28,800,now()),(29,900,now()),(30,1000,now());
+
+insert into item(id,value,indate) values(31,100,now()),(32,200,now()),(33,300,now()),(34,400,now()),(35,500,now()),(36,600,now()),(37,700,now()),(38,800,now()),(39,900,now()),(40,1000,now());
+
+insert into item(id,value,indate) values(41,100,now()),(42,200,now()),(43,300,now()),(44,400,now()),(45,500,now()),(46,600,now()),(47,700,now()),(48,800,now()),(49,900,now()),(50,1000,now()),(51,1000,now()),(52,1000,now()),(53,1000,now()),(54,1000,now()),(55,1000,now()),(56,1000,now()),(57,1000,now()),(58,1000,now()),(59,1000,now()),(60,1000,now());
+
+  数据库： 7477_com_uc
+  表名：   uc_members 和 uc_pm_members
+  字段：
+
+INSERT INTO uc_vars(name,value) VALUES('耐克运动鞋','广州'),('耐克运动鞋2','广州2'),('耐克运动鞋3','广州3');
+INSERT INTO uc_vars(name,value) VALUES('耐克运动鞋','广州');
+
+
+$params = array('value'=>'50');
+set_time_limit(0);
+echo date("H:i:s");
+for($i=0;$i<2000000;$i++){
+	$connect_mysql->insert($params);
+};
+echo date("H:i:s");
+
+
+$sql= "insert into twenty_million (value) values";
+for($i=0;$i<2000000;$i++){
+$sql.="('50'),";
+};
+$sql = substr($sql,0,strlen($sql)-1);
+$connect_mysql->query($sql);
+
+
+
+
+MariaDB [7477_com_uc]> create table test_530(id int null auto_increment primary key,data varchar(1024),date varchar(20)) engine=innodb partition by key(id) partitions 128;
+Query OK, 0 rows affected (3.38 sec)
+
+MariaDB [7477_com_uc]> delimiter //
+MariaDB [7477_com_uc]> create procedure prod_dt()
+    -> begin
+    -> declare i int;
+    -> set i=0;
+    -> while i< 100000 do
+    -> insert into test_530(data,date) value('1','2017-01-01');
+    -> set i=1+1;
+    -> end while;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.05 sec)	
+MariaDB [7477_com_uc]> delimiter ;
+MariaDB [7477_com_uc]> call prod_dt();
+
+
+
+echo "" > logs/wrapper.log 
+echo "" > logs/mycat.log 
+
+cat logs/wrapper.log 
+cat logs/mycat.log 
+
+sz logs/wrapper.log
+
+tail -n20 logs/mycat.log 
+tail -n20 logs/wrapper.log 
+
+在php中连接mycat数据库，创建数据表和插入数据。
+<?php
+$con = mysql_connect("192.168.1.2:8066","root","123456");
+//$con = mysql_connect("192.168.1.3:61920","root","123456");
+if (!$con)
+  {
+  die('Could not connect: ' . mysql_error());
+  }
+
+// Create table in my_db database
+mysql_select_db("7477_com_home", $con);
+$sql1 = "CREATE TABLE Persons1
+(
+FirstName varchar(15),
+LastName varchar(15),
+Age int
+)";
+$sql2 = "CREATE TABLE Persons2
+(
+FirstName varchar(15),
+LastName varchar(15),
+Age int
+)";
+$sql3 ="
+INSERT INTO Persons1(FirstName,LastName,Age) VALUES('jame','aaaaaaa','30');
+";
+mysql_query($sql1,$con);
+mysql_query($sql2,$con);
+mysql_query($sql3,$con);
+
+echo "数据表创建成功！";
+
+mysql_close($con);
+?>
+
+
+
+
+配置在M3上操作
+# mysql -p123456
+MariaDB [(none)]> create database user;
+MariaDB [(none)]> create database pay1;
+MariaDB [(none)]> show databases;
++--------------------+
+| Database           |
++--------------------+
+| pay1               |
+| user               |
++--------------------+
+MariaDB [(none)]> use pay1;
+MariaDB [pay1]> create table mybook (name char(15),price int,pages int);
+MariaDB [pay1]> INSERT INTO mybook(name,price,pages) VALUES('a1','50',518),('a2','500',518);
+
+
+配置在M4上操作
+MariaDB [(none)]> create database user;
+MariaDB [(none)]> create database pay2;
+MariaDB [(none)]> show databases;
++--------------------+
+| Database           |
++--------------------+
+| pay2               |
+| user               |
++--------------------+
+MariaDB [(none)]> use pay2;
+MariaDB [pay2]> create table mybook (name char(15),price int,pages int);
+MariaDB [pay2]> INSERT INTO mybook(name,price,pages) VALUES('a3','50',518),('a4','500',518);
+
+
+
+vi conf/server.xml 
+
+新增
+<user name="mycat">
+		<property name="password">123456</property>
+		<property name="schemas">user,pay</property>
+</user>
+
+vi conf/schema.xml
+新增：
+<schema name="user" checkSQLschema="false" sqlMaxLimit="100" dataNode="user" />
+		
+		<schema name="pay"  checkSQLschema="false" sqlMaxLimit="100" dataNode="pay" >
+		   <table name="pay" dataNode="pay1,pay2" rule="rule1"/>
+		</schema>
+
+		<dataNode name="user" dataHost="host" database="user" />
+		<dataNode name="pay1" dataHost="host" database="pay1" />
+		<dataNode name="pay2" dataHost="host" database="pay2" />
+
+		<dataHost name="host" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native">
+		   <!--<heartbeat>select 1</heartbeat>-->
+		   <heartbeat>select user()</heartbeat>
+		   <writeHost host="hostM1" url="192.168.1.3:61920" user="root" password="123456" />
+		   <writeHost host="hostM2" url="192.168.1.4:61920" user="root" password="123456" />
+		</dataHost>
+		
+
+		
+	<function name="func1" class="org.opencloudb.route.function.PartitionByLong">
+     <property name="partitionCount">2</property>
+     <property name="partitionLength">512</property>
+   </function>
+   
+
+ 重启服务
+/data/mycat/bin/mycat restart 
+
+连接数据库：
+mysql -umycat -p123456 -P8066 -h127.0.0.1
+
+
+INSERT INTO mybook(name,price,pages) VALUES('a3','50',518),('a4','500',518),('a4','500',518),('a4','500',518),('a4','500',518),('a4','500',518),('a4','500',518),('a4','500',518),('a4','500',518),('a4','500',518),('a4','500',518),('a4','500',518),('a4','500',518),('a4','500',518);
+
+INSERT INTO mybook(name,price,pages) VALUES('a1','50',518),('a2','500',518),('a3','500',518);
+
+INSERT INTO mybook(name,price,pages) VALUES('b1','50',518),('b2','500',518),('b3','500',518);
+
+
+
+create table pay (name char(15),price int,pages int);
+
+
+
+
+
+
+2，zookpeer安装
+
+官方下载地址：http://zookeeper.apache.org/releases.html#download
+国内清华大学镜像：
+https://mirror.tuna.tsinghua.edu.cn/apache/zookeeper/
+https://mirror.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
+
+Linux下载：wget https://mirror.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
