@@ -6,10 +6,8 @@
 
 github地址： https://github.com/funet8/MYSQL
 说明
-| 1 | 1|
-|---|---|
-| 系统 | Centos6 |
-| 端口 | 61920 |
+系统：Centos6 or 7 
+mysql端口 ：61920 
 
 
 ## 一、数据库的安装
@@ -67,6 +65,17 @@ sh Source_Package_Install_MariaDB.sh
 
 
 ## 五、数据库高可用方案
+### Mycat 数据库中间件
+https://github.com/funet8/MYSQL/tree/master/High_Availability/MyCat
+
+### MHA Keepalived
+https://github.com/funet8/MYSQL/tree/master/High_Availability/MHA_Keepalived
+
+### Haproxy Keepalived MySQL
+https://github.com/funet8/MYSQL/tree/master/High_Availability/Haproxy_Keepalived_MySQL
+
+### MariaDB Galera Cluster
+https://github.com/funet8/MYSQL/tree/master/High_Availability/MariaDB_Galera_Cluster
 
 
 ## 六、相关知识点
