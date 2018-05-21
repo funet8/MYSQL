@@ -1,0 +1,13 @@
+MariaDB Galera Cluster 部署（如何快速部署MariaDB集群）
+http://www.linuxidc.com/Linux/2015-07/119512.htm
+
+在CentOS7上配置MariaDB-Galera-Cluster过程全记录
+https://www.cnblogs.com/cured/p/7636480.html
+
+
+
+
+
+
+
+
