@@ -1,0 +1,46 @@
+[server default]
+#设置manager的工作目录
+manager_workdir=/data/masterha/app1.log
+#设置manager的日志        
+manager_log=/data/masterha/app1/manager.log
+#设置master保存binlog的位置，以便MHA可以找到master的日志，我这里的也就是mysql的数据目录
+master_binlog_dir=/data/mysql
+#设置自动failover时候的切换脚本
+master_ip_failover_script= /usr/local/bin/master_ip_failover
+#设置手动切换时候的切换脚本
+master_ip_online_change_script= /usr/local/bin/master_ip_online_change
+#设置mysql中root用户和密码
+user=root
+password=123456
+#设置监控主库，发送ping包的时间间隔，默认是3秒，尝试三次没有回应的时候自动进行railover
+ping_interval=1
+#设置远端mysql在发生切换时binlog的保存位置       
+remote_workdir=/tmp
+#设置复制环境中的复制用户名和密码 
+repl_user=repluser          
+repl_password=replpass
+#设置发生切换后发送的报警的脚本
+report_script= /usr/local/send_report    
+secondary_check_script= /usr/local/bin/masterha_secondary_check -s vm03 -s vm02
+#设置故障发生后关闭故障主机脚本（该脚本的主要作用是关闭主机放在发生脑裂,这里没有使用）
+shutdown_script=""
+#设置ssh的登录用户名   
+ssh_user=root
+#ssh和mysql的端口
+ssh_port=60920
+port=61920
+
+[server1]
+hostname=192.168.1.3
+port=61920
+
+[server2]
+hostname=192.168.1.4
+port=61920
+candidate_master=1   #设置为候选master，如果设置该参数以后，发生主从切换以后将会将此从库提升为主库，即使这个主库不是集群中事件最新的slave
+check_repl_delay=0   #默认情况下如果一个slave落后master 100M的relay logs的话，MHA将不会选择该slave作为一个新的master，因为对于这个slave的恢复需要
+#花费很长时间，通过设置check_repl_delay=0,MHA触发切换在选择一个新的master的时候将会忽略复制延时，这个参数对于设置了candidate_master=1的主机非常有>用，因为这个候选主在切换的过程中一定是新的master
+
+[server3]
+hostname=192.168.1.5
+port=61920
