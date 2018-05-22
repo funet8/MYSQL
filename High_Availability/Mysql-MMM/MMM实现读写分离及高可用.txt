@@ -4,3 +4,6 @@ http://www.178linux.com/5598
 
 使用mysql-mmm实现MySQL高可用集群
 https://blog.csdn.net/kingofworld/article/details/40041421
+
+mysql-mmm配置文件说明
+http://blog.chinaunix.net/uid-16844903-id-3152138.html
