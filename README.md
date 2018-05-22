@@ -9,7 +9,9 @@ github地址： https://github.com/funet8/MYSQL
 ## 说明
 
 系统：最小化安装 Centos6 or 7 (64位)
+
 mysql端口 ：61920
+
 ssh端口：60920
 
 
@@ -35,16 +37,17 @@ centos7
 源码包安装MariaDB-10.0.28 ，在centos6下测试成功
 使用方法：
 ```
-wget https://raw.githubusercontent.com/funet8/MYSQL/master/RPM_Install_MariaDB/RPM_Install_MariaDB.sh
-修改参数
+# wget https://raw.githubusercontent.com/funet8/MYSQL/master/RPM_Install_MariaDB/RPM_Install_MariaDB.sh
+修改以下参数
 MYSQL_PORY='61920' #MySQL访问端口
 Mariadb_File='/data/software/'  #Mariadb的RPM文件路径
 #是否有rpm文件 0没有文件需要下载，其他为有
 Mariadb_File_yes=1
 #是否需要创建web目录
 Filedir_yes=1
+
 ############执行 shell脚本
-sh RPM_Install_MariaDB.sh
+# sh RPM_Install_MariaDB.sh
 ```
 ### 3.源码包安装MariaDB
 源码包安装mariadb-10.0.35 ，在centos6下测试成功
@@ -75,21 +78,17 @@ sh Source_Package_Install_MariaDB.sh
 
 
 ## 六、数据库高可用方案
-### 1.Mycat 数据库中间件
-https://github.com/funet8/MYSQL/tree/master/High_Availability/MyCat
+### [1.Mycat 数据库中间件](https://github.com/funet8/MYSQL/tree/master/High_Availability/MyCat)
 
-### 2.MHA Keepalived
-https://github.com/funet8/MYSQL/tree/master/High_Availability/MHA_Keepalived
+### [2.MHA Keepalived](https://github.com/funet8/MYSQL/tree/master/High_Availability/MHA_Keepalived)
 在centos6.9+mariadb-10.0.28搭建未成功，出现“Error happend on checking configurations. Use of uninitialized value in string”报错。
 
-### 3.Mysql-MMM
-https://github.com/funet8/MYSQL/tree/master/High_Availability/Mysql-MMM
+### [3.Mysql-MMM](https://github.com/funet8/MYSQL/tree/master/High_Availability/Mysql-MMM)
 
-### 4.Haproxy Keepalived MySQL
-https://github.com/funet8/MYSQL/tree/master/High_Availability/Haproxy_Keepalived_MySQL
+### [4.Haproxy Keepalived MySQL](https://github.com/funet8/MYSQL/tree/master/High_Availability/Haproxy_Keepalived_MySQL)
 
-### 5.MariaDB Galera Cluster
-https://github.com/funet8/MYSQL/tree/master/High_Availability/MariaDB_Galera_Cluster
+### [5.MariaDB Galera Cluster](https://github.com/funet8/MYSQL/tree/master/High_Availability/MariaDB_Galera_Cluster)
+
 
 
 ## 七、相关知识点

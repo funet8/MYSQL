@@ -15,6 +15,7 @@ vm02 | MHA manager | ---- | --- | MHA-manager | 192.168.1.2 | -
 vm03 | mysql master| MariaDB-10.0.35 | Keepalived v1.2 | MHA-node | 192.168.1.3 | -
 vm04 | mysql slave | MariaDB-10.0.35 | Keepalived v1.2 | MHA-node | 192.168.1.4 | (备主)
 vm05 | mysql slave | MariaDB-10.0.35 | --- | MHA-node | 192.168.1.5 | -
+
 **VIP地址：192.168.1.8**
 **ssh端口为60920**
 **mysql端口为:61920**
