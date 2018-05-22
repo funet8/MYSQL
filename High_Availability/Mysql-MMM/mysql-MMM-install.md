@@ -6,12 +6,12 @@
 
 参考：
 节点 | 角色 | MYSQL  | IP | 备注
----|---|---|---|---|---
+---|---|---|---|---
 vm03 | mysql master| MariaDB-10.0.35  | 192.168.1.3 | 主数据库
 vm04 | mysql master| MariaDB-10.0.35  | 192.168.1.4 | 主数据库
 vm05 | mysql slave | MariaDB-10.0.35  | 192.168.1.5 | 从数据库
-**VIP地址：write：192.168.1.8 read:192.168.1.7**
-**ssh端口为60920**
+**系统版本：centos6.9**
+**VIP地址：write：192.168.1.7 read:192.168.1.8**
 **mysql端口为:61920**
 
 ## 一、安装mysql-mmm（三台机器都操作）
@@ -54,10 +54,9 @@ Rhel6或centos6,64位：http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-relea
 2、修改hosts
 分别修改三台机器的hosts文件
 ```
-echo "192.168.1.2 vm02 mha.mysqlmha.com
-192.168.1.3 vm03 mysql.mysqlmha.com
-192.168.1.4 vm04 slave1.mysqlmha.com
-192.168.1.5 vm05 slave2.mysqlmha.com">> /etc/hosts
+echo "192.168.1.3 vm03 master1.mysqlmmm.com
+192.168.1.4 vm04 master2.mysqlmmm.com
+192.168.1.5 vm05 slave.mysqlmmm.com">> /etc/hosts
 ```
 
 3.配置同步复制

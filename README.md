@@ -6,11 +6,11 @@
 
 github地址： https://github.com/funet8/MYSQL
 
-说明
+## 说明
 
-系统：Centos6 or 7 
-
-mysql端口 ：61920 
+系统：最小化安装 Centos6 or 7 (64位)
+mysql端口 ：61920
+ssh端口：60920
 
 
 ## 一、数据库的安装
@@ -81,6 +81,7 @@ https://github.com/funet8/MYSQL/tree/master/High_Availability/MyCat
 ### 2.MHA Keepalived
 https://github.com/funet8/MYSQL/tree/master/High_Availability/MHA_Keepalived
 在centos6.9+mariadb-10.0.28搭建未成功，出现“Error happend on checking configurations. Use of uninitialized value in string”报错。
+
 ### 3.Mysql-MMM
 https://github.com/funet8/MYSQL/tree/master/High_Availability/Mysql-MMM
 
@@ -97,6 +98,7 @@ https://github.com/funet8/MYSQL/tree/master/High_Availability/MariaDB_Galera_Clu
 [DDL，DML和DCL的区别与理解](https://github.com/funet8/MYSQL/wiki/DDL%EF%BC%8CDML%E5%92%8CDCL%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E7%90%86%E8%A7%A3)
 
 [半同步复制](https://github.com/funet8/MYSQL/wiki/%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6)
+
 
 
 
