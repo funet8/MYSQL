@@ -90,8 +90,12 @@ sh Source_Package_Install_MariaDB.sh
 ### [5.MariaDB Galera Cluster](https://github.com/funet8/MYSQL/tree/master/High_Availability/MariaDB_Galera_Cluster)
 
 
+## 七、MYSQL监控
+### zabbix 添加mysql监控
+### 慢查询日志
 
-## 七、相关知识点
+
+## 八、相关知识点
 [数据库脑裂](https://github.com/funet8/MYSQL/wiki/%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%25E8%2584%2591%25E8%25A3%2582)
 
 [DDL，DML和DCL的区别与理解](https://github.com/funet8/MYSQL/wiki/DDL%EF%BC%8CDML%E5%92%8CDCL%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E7%90%86%E8%A7%A3)

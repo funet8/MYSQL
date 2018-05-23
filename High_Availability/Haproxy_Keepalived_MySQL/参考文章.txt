@@ -1,2 +1,7 @@
 Haproxy+Keepalived+MySQL实现读均衡负载
 http://blog.itpub.net/25704976/viewspace-1319781/
+
+从架构上看，并不是高可用，而是读负载均衡。
+
+haproxy安装配置调优
+https://user.qzone.qq.com/573009114/blog/1412994608

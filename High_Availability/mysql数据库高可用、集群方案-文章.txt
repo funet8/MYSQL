@@ -24,6 +24,9 @@ https://www.linuxidc.com/Linux/2018-01/150364.htm
 MySQL实现高可用架构之MHA
 https://www.linuxidc.com/Linux/2017-11/149007.htm
 
+《MySQL的高可用架构》公开课内容分享
+https://mp.weixin.qq.com/s/xjQqXQGh-lkYu71ARE1GMQ
+
 
 
 DDL，DML和DCL的区别与理解
