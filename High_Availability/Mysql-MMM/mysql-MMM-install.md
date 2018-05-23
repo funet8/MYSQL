@@ -10,6 +10,7 @@
 vm03 | mysql master| MariaDB-10.0.35  | 192.168.1.3 | 主数据库
 vm04 | mysql master| MariaDB-10.0.35  | 192.168.1.4 | 主数据库
 vm05 | mysql slave | MariaDB-10.0.35  | 192.168.1.5 | 从数据库
+
 **系统版本：centos6.9**
 **VIP地址：write：192.168.1.7 read:192.168.1.8**
 **mysql端口为:61920**
