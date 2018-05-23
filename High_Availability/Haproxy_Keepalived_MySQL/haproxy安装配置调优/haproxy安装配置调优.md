@@ -1,32 +1,42 @@
-https://user.qzone.qq.com/573009114/blog/1412994608
-
-haproxy安装配置调优
-环境描述
- 
+# haproxy安装、WEB配置调优
+## 环境描述:
+```
 192.168.1.80      haproxy
 192.168.1.223     web1
 192.168.1.226     web2
+```
+## 1.安装
 
-1.安装
+yum安装
+```
+# yum install -y haproxy 
+```
+查看HAProxy版本和配置文件
+```
+# rpm -qi haproxy 
+# rpm -ql haproxy
+# cd /etc/haproxy/
+```
 
+```
 # wget http://down1.chinaunix.net/distfiles/haproxy-1.3.15.10.tar.gz
-
-# tar zcvf haproxy-1.3.15.10.tar.gz
-
+# tar zxvf haproxy-1.3.15.10.tar.gz
 # cd haproxy-1.3.15.10
-#uname -a //查看linux内核版本 
-
-# make TARGET=linux26 PREFIX=/usr/local/haproxy                                #将haproxy安装到/usr/local/haproxy
-
+# uname -a //查看linux内核版本 
+# make TARGET=linux26 PREFIX=/usr/local/haproxy           #将haproxy安装到/usr/local/haproxy
 # make install PREFIX=/usr/local/haproxy
+```
 
-2.配置
+## 2.配置
+
 安装完毕后，进入安装目录配置文件，默认情况下目录里是没有.cfg配置文件的，可以回到安装文件目录下将examples下的haproxy.cfg拷贝到usr/local/haproxy下。
-# cd /usr/local/haproxy
-# vi haproxy.cfg
 
- 默认文件内容如下：
-
+yum安装下的配置文件
+```
+# vi /etc/haproxy/haproxy.cfg
+```
+默认文件内容如下：
+```
  global
         log 127.0.0.1   local0
         maxconn 4096
@@ -37,7 +47,6 @@ haproxy安装配置调优
         nbproc 1
         pidfile /usr/local/haproxy/logs/haproxy.pid
         debug
-
 defaults
         log     127.0.0.1       local3
         mode    http
@@ -67,11 +76,13 @@ listen web_proxy 192.168.1.80:80
         option httpchk HEAD /check.txt HTTP/1.0
         server web1 192.168.1.223:80 weight 3 check
         server web2 192.168.1.226:80 weight 3 check
+```
 
 
 #####################################################################
 
 我自己的配置
+```
 global
         log 127.0.0.1   local0 info
         maxconn 4096
@@ -138,9 +149,12 @@ mode http
         option httpchk HEAD /check.txt HTTP/1.0
         server web1 115.28.35.35:80 weight 3 check
         server web2 115.28.35.32:80 weight 3 check
+```
+
 #####################################################################
 
 贴一个基于4层的HA配置
+```
 global
         log 127.0.0.1   local1 notice
         maxconn 5000
@@ -178,23 +192,27 @@ stats   uri     /haproxy-stats
 statsrealm Statistics\ Report
 stats   hide-version
 stats   refresh 10s
+```
 
 ########################################## 
 
 3.启动haproxy
-         启动服务：
-service httpd stop   //确保80端口没被占用
+```
+/etc/init.d/haproxy start
+或者
 /usr/local/sbin/haproxy –f /usr/local/sbin/haproxy.cfg
-       停止服务：
+
+```
+```
 #sudo killall haproxy
-      后端机配置：
 service iptables stop
 service httpd start  //开启后端机apache服务
+
 touch /var/www/html/test.html
-
-
+```
 
 现在HAProxy的算法也非常多，并不比专业的F5/LVS算法少，常用的算法有如下8种：
+```
     balance roundrobin，表示简单的轮询，建议关注；
     balance static-rr，表示根据权重，建议关注；
     balance leastconn，表示最少连接者先处理，建议关注；
@@ -203,12 +221,11 @@ touch /var/www/html/test.html
     balance url_param，表示根据请求的URl参数；
     balance hdr(name)，表示根据HTTP请求头来锁定每一次HTTP请求；
     balance rdp-cookie(name)，表示根据据cookie(name)来锁定并哈希每一次TCP请求。
-
-
-
+```
 
 global   # 全局参数的设置 
-     log 127.0.0.1 local0 info 
+```
+log 127.0.0.1 local0 info 
      # log语法：log [max_level_1] 
      # 全局的日志配置，使用log关键字，指定使用127.0.0.1上的syslog服务中的local0日志设备，记录日志等级为info的日志 
      user haproxy 
@@ -224,9 +241,10 @@ global   # 全局参数的设置
      # 设置最大打开的文件描述符数，在1.4的官方文档中提示，该值会自动计算，所以不建议进行设置 
      pidfile /var/run/haproxy.pid 
      # 定义haproxy的pid
-
+```
 defaults# 默认部分的定义
-     mode http
+```
+mode http
      # mode语法：mode {http|tcp|health} 。http是七层模式，tcp是四层模式，health是健康检测，返回OK
      log 127.0.0.1 local3 err
      # 使用127.0.0.1上的syslog服务的local3设备记录错误信息
@@ -248,9 +266,11 @@ defaults# 默认部分的定义
      # 设置连接客户端发送数据时的成功连接最长等待时间，默认单位是毫秒，新版本haproxy使用timeout client替代。该参数向后兼容
      srvtimeout 3000
      # 设置服务器端回应客户度数据发送的最长等待时间，默认单位是毫秒，新版本haproxy使用timeout server替代。该参数向后兼容
+```
 
 listen status# 定义一个名为status的部分
-     bind 0.0.0.0:1080
+```
+ bind 0.0.0.0:1080
      # 定义监听的套接字
      mode http
      # 定义为HTTP模式
@@ -266,9 +286,10 @@ listen status# 定义一个名为status的部分
      # 设置统计页面认证的用户和密码，如果要设置多个，另起一行写入即可
      stats hide-version
      # 隐藏统计页面上的haproxy版本信息
-
+```
 frontend http_80_in# 定义一个名为http_80_in的前端部分
-     bind 0.0.0.0:80
+```
+bind 0.0.0.0:80
      # http_80_in定义前端部分监听的套接字
      mode http
      # 定义为HTTP模式
@@ -290,9 +311,11 @@ frontend http_80_in# 定义一个名为http_80_in的前端部分
      # 如果满足策略php_web时，就将请求交予backend php_server
      use_backend static_server if static_web
      # 如果满足策略static_web时，就将请求交予backend static_server
+```
 
 backend php_server#定义一个名为php_server的后端部分
-     mode http
+```
+mode http
      # 设置为http模式
      balance source
      # 设置haproxy的调度算法为源地址hash
@@ -305,8 +328,17 @@ backend php_server#定义一个名为php_server的后端部分
      server php_server_bak 10.12.25.79:80 cookie 3 check inter 1500 rise 3 fall 3 backup
      # server语法：server [:port] [param*]
      # 使用server关键字来设置后端服务器；为后端服务器所设置的内部名称[php_server_1]，该名称将会呈现在日志或警报中、后端服务器的IP地址，支持端口映射[10.12.25.68:80]、指定该服务器的SERVERID为1[cookie 1]、接受健康监测[check]、监测的间隔时长，单位毫秒[inter 2000]、监测正常多少次后被认为后端服务器是可用的[rise 3]、监测失败多少次后被认为后端服务器是不可用的[fall 3]、分发的权重[weight 2]、最为备份用的后端服务器，当正常的服务器全部都宕机后，才会启用备份服务器[backup]
+```
 
 backend static_server
-     mode http
+```    
+	mode http
      option httpchk GET /test/index.html
      server static_server_1 10.12.25.83:80 cookie 3 check inter 2000 rise 3 fall 3
+```
+
+	 
+
+参考：
+https://user.qzone.qq.com/573009114/blog/1412994608	 
+	 

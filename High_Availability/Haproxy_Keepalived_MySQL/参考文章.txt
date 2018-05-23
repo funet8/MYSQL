@@ -1,0 +1,2 @@
+Haproxy+Keepalived+MySQL实现读均衡负载
+http://blog.itpub.net/25704976/viewspace-1319781/
