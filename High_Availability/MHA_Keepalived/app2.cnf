@@ -1,0 +1,25 @@
+[server default]
+port=61920
+ssh_port=60920
+user=root
+password=123456
+repl_user=repluser
+repl_password=replpass
+remote_workdir=/var/log/mha/app1
+master_binlog_dir=/var/lib/mysql
+manager_workdir=/usr/local/mha/workstatus/app1
+manager_log=/usr/local/mha/logs/app1.log
+
+[server1]
+hostname=192.168.1.3
+port=61920
+
+[server2]
+hostname=192.168.1.4
+candidate_master=1
+port=61920
+
+[server3]
+hostname=192.168.1.5
+no_master=1
+port=61920
