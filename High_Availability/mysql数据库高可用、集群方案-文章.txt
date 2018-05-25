@@ -1,28 +1,47 @@
 高性能、高可用、可扩展的MySQL集群如何组建？
 https://www.zhihu.com/question/21307639
 
+	LVS+Keepalived+MySQL	（有脑裂问题？但似乎很多人推荐这个）
+	DRBD+Heartbeat+MySQL	（有一台机器空余？Heartbeat切换时间较长？有脑裂问题？）
+	MySQL Proxy （不够成熟与稳定？使用了Lua？是不是用了他做分表则可以不用更改客户端逻辑？）
+	MySQL Cluster （社区版不支持INNODB引擎？商用案例不足？）
+	MySQL + MHA （如果配上异步复制，似乎是不错的选择，又和问题？）
+	MySQL + MMM （似乎反映有很多问题，未实践过，谁能给个说法）
+
+	LVS+Keepalived+MySQL  --确实有脑裂的问题，还无法做到准确判断mysqld是否HANG的情况；
+	DRBD+Heartbeat+MySQL  --同样有脑裂的问题，还无法做到准确判断mysqld是否HANG的情况，且DRDB是不需要的，增加反而会出问题；
+	MySQL Proxy 		  -- 不错的项目，可惜官方半途夭折了，不建议用，无法高可用，是一个写分离；
+	MySQL Cluster 		  -- 社区版本不支持NDB是错误的言论，商用案例确实不多，主要是跟其业务场景要求有关系、这几年发展有点乱不过现在已经上正规了、对网络要求高；
+	MySQL + MHA 		  -- 可以解决脑裂的问题，需要的IP多，小集群是可以的，但是管理大的就麻烦
 
 几种MySQL高可用方案整理
 https://blog.csdn.net/u013399093/article/details/70597712
-
+	第一种：主从复制+读写分离
+	第二种：Mysql Cluster （架构复杂，部署费时，MySQL Cluster Manager 是收费的。不适合大多数业务场景，而且有安全问题。因此，使用的人数较少。）
+	第三种：Heartbeat+双主从复制
+	第四种：HeartBeat+DRBD+Mysql
+	第五种：Lvs+keepalived+双主复制
+	第六种: MariaDB Galera （目前的复制仅仅支持InnoDB存储引擎,任何写入其他引擎的表，）
+	
+五大常见的MySQL高可用方案
+https://zhuanlan.zhihu.com/p/25960208?group_id=828336013045813248
 
 MySQL高可用架构之MHA
 https://www.cnblogs.com/gomysql/p/3675429.html
 
+MySQL实现高可用架构之MHA
+https://www.linuxidc.com/Linux/2017-11/149007.htm
 
 MySQL高可用架构PXC（Percona XtraDB Cluster）
 https://www.linuxidc.com/Linux/2017-05/143519.htm
 
+Percona XtraDB Cluster—MySQL高可用性解决方案
 http://www.ttlsa.com/mysql/percona-xtradb-cluster-mysql/
 
 
 MMM实现MySQL高可用详解
 https://www.linuxidc.com/Linux/2018-01/150364.htm
 
-
-
-MySQL实现高可用架构之MHA
-https://www.linuxidc.com/Linux/2017-11/149007.htm
 
 《MySQL的高可用架构》公开课内容分享
 https://mp.weixin.qq.com/s/xjQqXQGh-lkYu71ARE1GMQ
