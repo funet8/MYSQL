@@ -5,6 +5,7 @@ user=root
 password=123456
 repl_user=repluser
 repl_password=replpass
+
 remote_workdir=/var/log/mha/app1
 master_binlog_dir=/var/lib/mysql
 manager_workdir=/usr/local/mha/workstatus/app1
