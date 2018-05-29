@@ -1,11 +1,8 @@
-[MySQL高可用架构之MHA](http://www.cnblogs.com/gomysql/p/3675429.html)
+MySQL高可用架构之MHA
+http://www.cnblogs.com/gomysql/p/3675429.html
 
 Mysql半同步复制+MHA+Keepalived部署
 https://blog.csdn.net/lilingzj/article/details/71516603
-
-
-MHA安装与配置
-https://user.qzone.qq.com/573009114/blog/1452842954
 
 MySQL半同步+MHA+Keepalived部署指导-部署成功
 https://blog.csdn.net/gua___gua/article/details/52384098

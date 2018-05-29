@@ -1,15 +1,15 @@
 [server default]
 port=61920
 ssh_port=60920
-user=root
+user=root1
 password=123456
-repl_user=repluser
+repl_user=repl
 repl_password=replpass
 
 remote_workdir=/var/log/mha/app1
 master_binlog_dir=/var/lib/mysql
-manager_workdir=/usr/local/mha/workstatus/app1
-manager_log=/usr/local/mha/logs/app1.log
+manager_workdir=/data/mha/workstatus/app1
+manager_log=/data/mha/logs/app1.log
 
 [server1]
 hostname=192.168.1.3
