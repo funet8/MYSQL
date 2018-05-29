@@ -37,8 +37,6 @@ mkdir /home/data
 	mkdir /data/software
 	mkdir /backup
 	ln -s /backup /data/
-	#/data/wwwroot/mysql_log为慢查询日志目录
-	chown mysql.mysql -R /data/wwwroot/mysql_log
 fi
 
 #安装支持###################################################
@@ -118,6 +116,9 @@ wget -O /data/conf/my.cnf https://raw.githubusercontent.com/funet8/MYSQL/master/
 iptables -I INPUT -p tcp --dport $MYSQL_PORY -j ACCEPT
 service iptables save
 systemctl restart iptables.service
+
+#/data/wwwroot/mysql_log为慢查询日志目录
+chown mysql.mysql -R /data/wwwroot/mysql_log
 
 #重启mysql##################################
 systemctl restart mysql

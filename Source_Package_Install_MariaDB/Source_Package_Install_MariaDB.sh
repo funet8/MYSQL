@@ -121,6 +121,10 @@ echo "my.cnf move success"
 /sbin/iptables -I INPUT -p tcp --dport $MYSQL_PORY -j ACCEPT
 /etc/rc.d/init.d/iptables save
 /etc/init.d/iptables restart
+
+#/data/wwwroot/mysql_log为慢查询日志目录
+chown mysql.mysql -R /data/wwwroot/mysql_log
+
 #重启服务
 service mysqld restart 
 
