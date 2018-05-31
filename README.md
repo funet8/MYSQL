@@ -81,7 +81,6 @@ sh Source_Package_Install_MariaDB.sh
 ### [1.Mycat 数据库中间件](https://github.com/funet8/MYSQL/tree/master/High_Availability/MyCat)
 
 ### [2.MHA Keepalived](https://github.com/funet8/MYSQL/tree/master/High_Availability/MHA_Keepalived)
-在centos6.9+mariadb-10.0.28搭建未成功，出现“Error happend on checking configurations. Use of uninitialized value in string”报错。
 
 ### [3.Mysql-MMM](https://github.com/funet8/MYSQL/tree/master/High_Availability/Mysql-MMM)
 
@@ -94,6 +93,8 @@ sh Source_Package_Install_MariaDB.sh
 ### zabbix 添加mysql监控
 ### 慢查询日志
 
+## 八、压力测试
+
 
 ## 八、相关知识点
 [数据库脑裂](https://github.com/funet8/MYSQL/wiki/%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%25E8%2584%2591%25E8%25A3%2582)
@@ -101,6 +102,12 @@ sh Source_Package_Install_MariaDB.sh
 [DDL，DML和DCL的区别与理解](https://github.com/funet8/MYSQL/wiki/DDL%EF%BC%8CDML%E5%92%8CDCL%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E7%90%86%E8%A7%A3)
 
 [半同步复制](https://github.com/funet8/MYSQL/wiki/%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6)
+
+[mysql 压力测试 自带工具mysqlslap](https://github.com/funet8/MYSQL/wiki/mysql-%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95-%E8%87%AA%E5%B8%A6%E5%B7%A5%E5%85%B7mysqlslap)
+
+
+
+
 
 
 

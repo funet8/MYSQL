@@ -25,6 +25,12 @@ https://blog.csdn.net/u013399093/article/details/70597712
 	
 五大常见的MySQL高可用方案
 https://zhuanlan.zhihu.com/p/25960208?group_id=828336013045813248
+	2.1.	主从或主主半同步复制
+	2.2.	半同步复制优化
+	
+	2.3.1.	MHA+多节点集群
+	
+	
 
 MySQL高可用架构之MHA
 https://www.cnblogs.com/gomysql/p/3675429.html

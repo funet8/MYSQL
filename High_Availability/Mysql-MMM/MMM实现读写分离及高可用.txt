@@ -1,4 +1,3 @@
-
 MySQL/MariaDB基于MMM实现读写分离及高可用
 http://www.178linux.com/5598
 
@@ -7,3 +6,15 @@ https://blog.csdn.net/kingofworld/article/details/40041421
 
 mysql-mmm配置文件说明
 http://blog.chinaunix.net/uid-16844903-id-3152138.html
+
+MMM(Master-Master replication managerfor Mysql，Mysql主主复制管理器)是一套灵活的脚本程序，基于perl实现，用来对mysql replication进行监控和故障迁移，并能管理mysql Master-Master复制的配置(同一时间只有一个节点是可写的)。
+
+优点：
+安装简单
+高可用性，扩展性好，出现故障自动切换，对于主主同步，在同一时间只提供一台数据库写操作，保证的数据的一致性。
+
+缺点：
+Monitor节点是单点，可以结合Keepalived实现高可用。
+相对于双节点需要更多的资源;
+双主结构对数据库IO性能提出更高要求
+
