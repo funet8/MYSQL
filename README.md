@@ -17,7 +17,7 @@ ssh端口：60920
 
 ## 一、数据库的安装
 
-Centos系统安装 MariaDB
+[Centos系统安装 MariaDB](https://github.com/funet8/MYSQL/blob/master/Install_MariaDB.md)
 
 ## 二、mysql优化技术
 
