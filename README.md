@@ -32,6 +32,9 @@ ssh端口：60920
 ## 五、数据库备份
 
 ### xtrabackup
+### [mysqldump 备份数据库](https://github.com/funet8/MYSQL/blob/master/Mysql_Shell/mysql_all_backup_mysqldump.sh)
+
+### [mysql导出用户权限脚本](https://github.com/funet8/MYSQL/blob/master/Mysql_Shell/mysql_backup_user.sh)
 
 
 ## 六、数据库高可用方案
