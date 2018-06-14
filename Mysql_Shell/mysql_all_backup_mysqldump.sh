@@ -64,7 +64,7 @@ done
 # 压缩备份文件 
 date=`date -I` 
 cd $tmpBackupDir 
-tar czf $backupDir/mysql-$dateTime.tar.gz ./
+tar czf $backupDir/mysql-$date.tar.gz ./
 #End完成 
 
 
