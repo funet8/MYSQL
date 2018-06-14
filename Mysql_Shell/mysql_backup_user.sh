@@ -19,6 +19,9 @@ expgrants()
 }    
 expgrants > ./grants.sql
 
+#导入
+#mysql -uname -ppwd < grants.sql
+
 #这个导出脚本的整体思路是：分成三个步骤，用管道连接起来，前一步操作的结果，作为后一步操作的输入：
 #第一步先使用concat函数，查询mysql.user中的用户授权，并连接成一个show grants for 命令，执行命令时，加上 "-B -N"选项，让输出结果没有列名和方框，只是命令；
 #第二步将上一步的show grants for 命令，再次执行一次，得出mysql中每个授权对应的具体的GRANT授权命令；
