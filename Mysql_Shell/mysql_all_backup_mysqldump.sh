@@ -17,6 +17,10 @@
 #echo "00 05 * * *  root /data/conf/shell/mysql_all_backup_mysqldump.sh" >>  /etc/crontab
 #service crond restart
 
+#20180614-修改
+#mysqldump 添加参数：--skip-lock-tables
+#解决报错：mysqldump: Got error: 1142: "SELECT, LOCK TABLES command denied to user 'localbackupuser'@'localhost' for table 'accounts'" when using LOCK TABLES
+
 
 ####################################
 # 数据库的数据目录
@@ -50,7 +54,7 @@ continue
 else 
 # 备份数据库修改方法
 #/usr/bin/mysqlhotcopy --user=$mysqlUser --password=$mysqlPWD -q "$databases" $tmpBackupDir
-/usr/bin/mysqldump -u$mysqlUser -p"$mysqlPWD" "$databases" > $tmpBackupDir/"$databases".sql
+/usr/bin/mysqldump -u$mysqlUser --skip-lock-tables -p"$mysqlPWD" "$databases" > $tmpBackupDir/"$databases".sql
 
 dateTime=`date "+%Y.%m.%d %H:%M:%S"` 
 echo "$dateTime Database:$databases backup success!" >>$backupDir/MySQLBackup.log 
@@ -60,7 +64,7 @@ done
 # 压缩备份文件 
 date=`date -I` 
 cd $tmpBackupDir 
-tar czf $backupDir/mysql-$date.tar.gz ./
+tar czf $backupDir/mysql-$dateTime.tar.gz ./
 #End完成 
 
 
