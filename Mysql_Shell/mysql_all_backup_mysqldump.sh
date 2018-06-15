@@ -23,7 +23,7 @@
 
 
 ####################################
-# 数据库的数据目录
+# 数据库的数据目录1
 dataDir=/data/mysql/
 # 数据备份目录 
 tmpBackupDir=/tmp/mysqlblackup  	#临时目录
