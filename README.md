@@ -57,7 +57,7 @@ ssh端口：60920
 [mysql 压力测试 自带工具mysqlslap](https://github.com/funet8/MYSQL/wiki/mysql-%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95-%E8%87%AA%E5%B8%A6%E5%B7%A5%E5%85%B7mysqlslap)
 
 ## 九、相关知识点
-[数据库脑裂](https://github.com/funet8/MYSQL/wiki/%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%25E8%2584%2591%25E8%25A3%2582)
+[数据库脑裂](https://github.com/funet8/MYSQL/wiki/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%84%91%E8%A3%82)
 
 [DDL，DML和DCL的区别与理解](https://github.com/funet8/MYSQL/wiki/DDL%EF%BC%8CDML%E5%92%8CDCL%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E7%90%86%E8%A7%A3)
 
