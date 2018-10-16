@@ -65,6 +65,8 @@ ssh端口：60920
 
 [mysql 压力测试 自带工具mysqlslap](https://github.com/funet8/MYSQL/wiki/mysql-%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95-%E8%87%AA%E5%B8%A6%E5%B7%A5%E5%85%B7mysqlslap)
 
+[慢查询日志分析-mysqldumpslow](https://github.com/funet8/MYSQL/mysql_optimize/mysqldumpslow-help.md)
+
 ## 十、Mysql排错记录
 [Mysql排错记录](https://github.com/funet8/MYSQL/blob/master/Bug_Record.md)
 

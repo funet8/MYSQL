@@ -41,3 +41,7 @@ wget https://raw.githubusercontent.com/funet8/MYSQL/master/Source_Package_Instal
 运行脚本
 sh Source_Package_Install_MariaDB.sh
 ```
+
+### CentOS 7编译安装MySQL 8.0
+
+CentOS7_install_MySQL8.0
