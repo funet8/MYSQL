@@ -13,20 +13,24 @@
 #GRANT EVENT , SELECT ,SHOW DATABASES, RELOAD , LOCK TABLES , REPLICATION CLIENT ON * . * TO 'localbackupuser'@'localhost' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
 ####################################
 
-#每天0:00自动备份
-#echo "00 05 * * *  root /data/conf/shell/mysql_all_backup_mysqldump.sh" >>  /etc/crontab
+#每天自动备份
+#echo "00 03 * * *  root /data/conf/shell/mysql_all_backup_mysqldump.sh" >>  /etc/crontab
 #service crond restart
 
 #20180614-修改
 #mysqldump 添加参数：--skip-lock-tables
 #解决报错：mysqldump: Got error: 1142: "SELECT, LOCK TABLES command denied to user 'localbackupuser'@'localhost' for table 'accounts'" when using LOCK TABLES
 
+#20181031-修改
+#将变量改为 tmpBackupDir=/data/tmp/mysqlblackup 防止占用 "/" 目录
+
+
 
 ####################################
-# 数据库的数据目录1
+# 数据库的数据目录
 dataDir=/data/mysql/
 # 数据备份目录 
-tmpBackupDir=/tmp/mysqlblackup  	#临时目录
+tmpBackupDir=/data/tmp/mysqlblackup  	#临时目录
 backupDir=/backup/mysql
 # 用来备份数据库的用户名和密码 
 mysqlUser=localbackupuser
@@ -89,3 +93,5 @@ done
 
 echo "完成于: `date +%F' '%T' '%w`" >> $logfiledate
 exit 0
+
+
