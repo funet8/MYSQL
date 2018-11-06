@@ -33,6 +33,14 @@ ssh端口：60920
 
 ### xtrabackup
 ### [mysqldump 备份数据库](https://github.com/funet8/MYSQL/blob/master/Mysql_Shell/mysql_all_backup_mysqldump.sh)
+操作方法：
+```
+# wget https://raw.githubusercontent.com/funet8/MYSQL/master/Mysql_Shell/mysql_all_backup_mysqldump.sh
+
+# chmod +x mysql_all_backup_mysqldump.sh
+
+添加到crontab定时任务中。
+```
 
 ### [mysql导出用户权限脚本](https://github.com/funet8/MYSQL/blob/master/Mysql_Shell/mysql_backup_user.sh)
 

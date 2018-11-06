@@ -1,0 +1,2 @@
+Mysql中的ibdata1文件非常大如何解决
+https://yq.aliyun.com/articles/58732

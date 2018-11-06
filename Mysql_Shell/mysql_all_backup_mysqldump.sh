@@ -39,13 +39,13 @@ mysqlPWD='123456yxkj303'
 
 # 如果临时备份目录存在，清空它，如果不存在则创建它 
 if [[ -e $tmpBackupDir ]]; then 
-rm -rf $tmpBackupDir/* 
+	rm -rf $tmpBackupDir/* 
 else 
-mkdir $tmpBackupDir 
+	mkdir -p $tmpBackupDir 
 fi 
 # 如果备份目录不存在则创建它 
 if [[ ! -e $backupDir ]];then 
-mkdir $backupDir 
+	mkdir -p $backupDir
 fi 
 # 得到数据库备份列表，在此可以过滤不想备份的数据库 
 #for databases in `find $dataDir -type d | \
