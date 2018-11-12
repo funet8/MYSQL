@@ -35,6 +35,7 @@ ssh端口：60920
 ### [mysqldump 备份数据库](https://github.com/funet8/MYSQL/blob/master/Mysql_Shell/mysql_all_backup_mysqldump.sh)
 操作方法：
 ```
+# cd /data/conf/shell/
 # wget https://raw.githubusercontent.com/funet8/MYSQL/master/Mysql_Shell/mysql_all_backup_mysqldump.sh
 
 # chmod +x mysql_all_backup_mysqldump.sh
