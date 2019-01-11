@@ -40,8 +40,10 @@ Mysql_Prot='3306'
 #Mysql_NAMES='mysql cloudreve_7477_me xshd_hander_com'
 Mysql_NAMES=`mysql -h$Mysql_hosts -u$mysqlUser -p$mysqlPWD -P$Mysql_Prot -e "show databases\G" |grep 'Database'|awk -F'Database: ' '{print $2}' |grep -v 'mysql\|information_schema\|performance_schema'`
 
+Today=`date -I` 
 tmpBackupDir='/data/tmp/mysqlblackup' 	#临时目录
-backupDir="/backup/mysql/$Mysql_hosts"	#备份之后的目录
+backupDir=/backup/mysql-$Mysql_hosts/$Today	#备份之后的目录
+MySQLBackup_Log=$backupDir/MySQLBackup_Log_$Mysql_hosts.log		#日志
 
 ########################################################################
 ##2.创建目录
@@ -61,10 +63,10 @@ fi
 for databases in $Mysql_NAMES;
 do
 	dateTime=`date "+%Y.%m.%d %H:%M:%S"` 
-	echo "$dateTime START backup $databases!" >>$backupDir/MySQLBackup.log 
+	echo "$dateTime START backup $databases!" >>$MySQLBackup_Log
 	/usr/bin/mysqldump -h$Mysql_hosts -P$Mysql_Prot -u$mysqlUser --skip-lock-tables -p"$mysqlPWD" $databases > $tmpBackupDir/$databases.sql
 	dateTime=`date "+%Y.%m.%d %H:%M:%S"` 
-	echo "$dateTime Database:$databases backup success!" >>$backupDir/MySQLBackup.log 
+	echo "$dateTime Database:$databases backup success!" >>$MySQLBackup_Log
 done 
 
 ########################################################################
@@ -81,12 +83,12 @@ done
 ##5.删除过期备份
 ######################################################################## 
 ndays="6" 									#保留ndays+1天前的文件
-wheredir="/backup/mysql"
+#wheredir="/backup/mysql"
 logfiledate="$backupDir/Del_Bakfile_Log.log"
 
 #删除过期的全备
 echo -e "........................start waiting......................" >> $logfiledate
-for efile in $(/usr/bin/find $wheredir -mtime +$ndays)
+for efile in $(/usr/bin/find $backupDir -mtime +$ndays)
 do
 	if [ -d ${efile} ]; then
 	rm -rf "${efile}"
