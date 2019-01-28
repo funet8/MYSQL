@@ -1,0 +1,325 @@
+
+mysqldump是一种逻辑备份方式，将数据转换成sql文件，其最大的缺陷就是备份和恢复时间很长，对于一个小于10G的数据库而言，这个速度还是可以接受的，但是如果数据库较大，那在使用mysqldump备份就非常不合适了。
+
+
+lvm是一种采用逻辑卷快照功能对数据进行备份，可以实现几乎热备，但是备份过程较为复杂(来回切换终端)，很难用shell脚本直接实现，不过现在似乎有个工具mylvmbackup可以实现自动化备份，但是没有尝试过。
+
+
+Xtrabackup对MyISAM表只能实现温备，并且不支持增量备份，所以每次对MyISAM表备份都是全备。
+
+XtraBackup更多高级特性通常只能在innodb存储引擎上实现，而且高级特性还都依赖于mysql数据库对innodb引擎实现了单独表空间，否则没办法实现单表或单库导出
+
+
+
+那么今天就和大家聊聊第三款开源备份工具xtrabackup：
+
+官方站点：http://www.percona.com
+
+官方在线文档：http://www.percona.com/doc/percona-xtrabackup/2.2/
+
+最新软件包下载地址：http://www.percona.com/downloads/XtraBackup/
+
+
+
+mysql> show global variables like '%innodb_file_per_table%';
+
++-----------------------+-------+
+| Variable_name         | Value |
++-----------------------+-------+
+| innodb_file_per_table | ON    |
++-----------------------+-------+
+
+
+系统：CentOS release 6.7
+数据库： 10.0.25-MariaDB
+数据库目录： /var/lib/mysql --软连接--> /data/mysql
+备份目录：/backup/
+
+
+二、安装
+XtraBackup本篇博客采用yum安装方式
+1、yum安装
+
+# wget http://www.percona.com/downloads/XtraBackup/XtraBackup-2.2.9/binary/redhat/6/x86_64/percona-xtrabackup-2.2.9-5067.el6.x86_64.rpm
+# rpm -ivh percona-xtrabackup-2.2.9-5067.el6.x86_64.rpm
+warning: percona-xtrabackup-2.2.9-5067.el6.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID cd2efd2a: NOKEY
+error: Failed dependencies:
+        perl(DBD::mysql) is needed by percona-xtrabackup-2.2.9-5067.el6.x86_64
+        perl(Time::HiRes) is needed by percona-xtrabackup-2.2.9-5067.el6.x86_64
+
+#yum -y install perl-Time-HiRes perl-DBD-MySQL perl-IO-Socket-SSL
+
+2、查看Xtrabackup安装的工具
+# rpm -ql percona-xtrabackup |grep bin
+/usr/bin/innobackupex  
+/usr/bin/xbcrypt      
+/usr/bin/xbstream      
+/usr/bin/xtrabackup 
+
+
+3、XtraBackup中主要包含了三个工具
+xbsteam 支持流式备份
+xtrbackup 用于热备innodb、xtradb表中数据的工具，不能备份其它类型的表，也不能备份数据表结构
+innobackupex 是将xtrabackup进行封装的perl脚本，提供了备份MyISAM表的能力
+
+
+三、innobackupex几个非常重要的参数
+
+--apply-log
+一般情况下，在备份完成后，数据尚且不能用于恢复操作，因为备份的数据中可能会包含尚未提交的事务或已经提交但尚未同步至数据文件中的事务。因此，此时数据文件仍处理不一致状态。“准备”的主要作用正是通过回滚未提交的事务及同步已经提交的事务至数据文件也使得数据文件处于一致性状态。
+
+
+--redo-only
+准备(prepare)增量备份与整理完全备份有着一些不同，尤其要注意的是：
+(1)需要在每个备份(包括完全和各个增量备份)上，将已经提交的事务进行“重放”。“重放”之后，所有的备份数据将合并到完全备份上。
+(2)基于所有的备份将未提交的事务进行“回滚”。
+
+
+--copy-back
+该选项用于执行恢复(还原)操作，其通过复制所有数据相关的文件至mysql服务器DATADIR目录中来执行恢复过程。innobackupex通过backup-my.cnf来获取DATADIR目录的相关信息。
+
+
+四、innobackup备份语法
+
+1.完全备份+完全恢复
+完全备份
+# innobackupex --user=DBUSER --password=DBUSERPASS  /path/to/BACKUP-DIR/
+innobackupex --user=root --password=123456  /backup
+ 
+准备一个完全备份
+# innobackupex --apply-log  /path/to/BACKUP-DIR
+ 
+从一个完全备份中恢复数据
+# innobackupex --copy-back /path/to/BACKUP-DIR
+innobackupex --copy-back /backup
+
+innobackupex --defaults-file=/etc/my.cnf --user=root  --copy-back /backup/2016-07-07_14-32-33/
+恢复操作出现错误
+innobackupex: Error: no 'datadir' option in group 'mysqld' in server configuration file '/etc/my.cnf' at /usr/bin/innobackupex line 4506.
+解决办法：
+vi /etc/my.cnf 在[mysqld]选项下面添加：
+datadir                = /data/mysql
+出现错误：
+innobackupex: Error: Original data directory '/data/mysql' is not empty! at /usr/bin/innobackupex line 2194.
+
+
+2.完全备份+增量备份+完全恢复
+
+完全备份：
+# innobackupex --user=DBUSER --password=DBUSERPASS  /path/to/BACKUP-DIR/
+ 
+第一次增量备份
+# innobackupex --user=DBUSER --password=DBUSERPASS --incremental /backup --incremental-basedir=BASEDIR
+ 
+第二次增量备份
+# innobackupex --user=DBUSER --password=DBUSERPASS --incremental /backup --incremental-basedir=BASEDIR
+ 
+准备：
+执行完全备份redo
+# innobackupex --apply-log --redo-only BASE-DIR
+执行第一次增量备份redo
+# innobackupex --apply-log --redo-only BASE-DIR --incremental-dir=INCREMENTAL-DIR-1
+执行第二次增量备份redo
+# innobackupex --apply-log --redo-only BASE-DIR --incremental-dir=INCREMENTAL-DIR-2
+ 
+还原：
+# innobackupex --copy-back BASE-DIR
+ 
+解释：
+其中BASE-DIR指的是完全备份所在的目录，
+而INCREMENTAL-DIR-1指的是第一次增量备份的目录，
+INCREMENTAL-DIR-2指的是第二次增量备份的目录，
+其它依次类推，即如果有多次增量备份，每一次都要执行如上操作；
+
+
+
+五、以上两种方式案列重放
+1.完全备份+完全恢复
+ 
+2、innobackupex对DB进行完全备份
+# innobackupex --user=root --password=123456 /backup/
+如果执行正确，其最后输出的几行信息通常如下：
+innobackupex: Backup created in directory '/backup/2015-03-18_21-00-17'
+innobackupex: MySQL binlog position: filename 'mysql-bin.000003', position 332
+150318 21:00:23  innobackupex: Connection to database server closed
+150318 21:00:23  innobackupex: completed OK!
+ 
+3、查看备份目录和文件
+# ls /backup/
+2015-03-18_21-00-17
+# ls /backup/2015-03-18_21-00-17/
+backup-my.cnf  jiaowu  performance_schema  xtrabackup_binlog_info  xtrabackup_info
+ibdata1        mysql   test                xtrabackup_checkpoints  xtrabackup_logfile
+ 
+4、准备一个完全备份
+# innobackupex --user=root --password=123456 --apply-log /backup/2015-03-18_21-00-17/
+ 
+#####模拟数据库故障#####
+5、这里还是采用老方法直接删除所有的数据文件
+# service mysqld stop
+# rm -rf /mydata/data/*
+ 
+6、从一个完全备份中恢复数据库
+# innobackupex --copy-back /backup/2015-03-18_21-00-17/
+ 
+7、修改数据目录权限
+# chown -R mysql.mysql /mydata/data/
+ 
+8、启动mysqld服务
+# service mysqld start
+ 
+9、登陆mysql查看是否是否一致
+# mysql -e 'use jiaowu;select * from tutor;'
++------+---------------+--------+------+
+| TID  | Tname         | Gender | Age  |
++------+---------------+--------+------+
+|    1 | ZhengYansheng | M      |   25 |
+|    2 | LiJian        | M      |   26 |
+|    3 | OuYangyu      | M      |   27 |
+|    4 | LuoChenghui   | M      |   25 |
+|    5 | LiuYunbo      | M      |   25 |
+|    6 | FuJian        | M      |   24 |
+|    7 | LiMenglu      | F      |   23 |
+|    8 | BaoYintu      | M      |   28 |
+|    9 | WangYana      | F      |   25 |
++------+---------------+--------+------+
+ 
+#数据已经成功恢复到数据库当中
+
+
+六、Xtrabackup的高级功能
+流式压缩功能
+Xtrabackup对备份的数据文件支持“流”功能，即可以将备份的数据通过STDOUT传输给tar程序进行归档，而不是默认的直接保存至某备份目录中。要使用此功能，仅需要使用--stream选项即可。如：
+# innobackupex --user=root --password=123456 --stream=tar  /backup | gzip > /backup/`date +%F_%H-%M-%S`.tar.gz
+
+
+甚至也可以使用类似如下命令将数据备份至其它服务器：强烈推荐这种方式
+# innobackupex --user=root --password=123456 --stream=tar  /backup | ssh root@192.168.1.100  'cat - > /backup/`date +%F_%H-%M-%S`.tar'
+
+
+此外，在执行本地备份时，还可以使用--parallel选项对多个文件进行并行复制。此选项用于指定在复制时启动的线程数目。当然，在实际进行备份时要利用此功能的便利性，也需要启用innodb_file_per_table选项或共享的表空间通过innodb_data_file_path选项存储在多个ibdata文件中。对某一数据库的多个文件的复制无法利用到此功能。其简单使用方法如下：
+# innobackupex --parallel  /path/to/backup
+ 
+同时，innobackupex备份的数据文件也可以存储至远程主机，这可以使用--remote-host选项来实现：
+# innobackupex --remote-host=root@www.magedu.com  /path/IN/REMOTE/HOST/to/backup
+
+
+七、使用Xtrabackup对数据库进行部分备份
+
+Xtrabackup也可以实现部分备份，即只备份某个或某些指定的数据库或某数据库中的某个或某些表。但要使用此功能，必须启用innodb_file_per_table选项，即每张表保存为一个独立的文件。同时，其也不支持--stream选项，即不支持将数据通过管道传输给其它程序进行处理。
+
+此外，还原部分备份跟还原全部数据的备份也有所不同，即你不能通过简单地将prepared的部分备份使用--copy-back选项直接复制回数据目录，而是要通过导入表的方向来实现还原。当然，有些情况下，部分备份也可以直接通过--copy-back进行还原，但这种方式还原而来的数据多数会产生数据不一致的问题，因此，无论如何不推荐使用这种方式。
+
+(1)创建部分备份
+
+创建部分备份的方式有三种：
+
+正则表达式(--include)
+枚举表文件(--tables-file)
+列出要备份的数据库(--databases)。
+
+(a)使用--include
+使用--include时，要求为其指定要备份的表的完整名称，即形如databasename.tablename，如：
+# innobackupex --include='^mageedu[.]tb1'  /path/to/backup
+ 
+(b)使用--tables-file
+此选项的参数需要是一个文件名，此文件中每行包含一个要备份的表的完整名称；如：
+# echo -e 'mageedu.tb1\nmageedu.tb2' > /tmp/tables.txt
+# innobackupex --tables-file=/tmp/tables.txt  /path/to/backup
+ 
+(c)使用--databases
+此选项接受的参数为数据名，如果要指定多个数据库，彼此间需要以空格隔开；同时，在指定某数据库时，也可以只指定其中的某张表。此外，此选项也可以接受一个文件为参数，文件中每一行为一个要备份的对象。如：
+# innobackupex --databases="bbb zabbix" --user=root --password=123456  /backup
+
+
+(2)整理(preparing)部分备份
+prepare部分备份的过程类似于导出表的过程，要使用--export选项进行：
+# innobackupex --apply-log --export  /pat/to/partial/backup
+ 
+此命令执行过程中，innobackupex会调用xtrabackup命令从数据字典中移除缺失的表，因此，会显示出许多关于“表不存在”类的警告信息。同时，也会显示出为备份文件中存在的表创建.exp文件的相关信息。
+
+(3)还原部分备份
+还原部分备份的过程跟导入表的过程相同。当然，也可以通过直接复制prepared状态的备份直接至数据目录中实现还原，不要此时要求数据目录处于一致状态。
+
+
+
+导出表是在备份的prepare阶段进行的，因此，一旦完全备份完成，就可以在prepare过程中通过--export选项将某表导出了：
+# innobackupex --apply-log --export /backup
+ 
+此命令会为每个innodb表的表空间创建一个以.exp结尾的文件，这些以.exp结尾的文件则可以用于导入至其它服务器。
+
+
+
+一、全量备份+全量恢复方法
+1.备份：
+innobackupex --defaults-file=/etc/my.cnf --user=root --password=123456  /backup
+生成目录：/backup/2016-07-11_15-03-07
+
+2.模拟破坏+备份
+cp -a /data/mysql/ /data/mysql_bak	【做好数据库文件备份】
+rm -rf /data/mysql/*				【删除数据库】
+
+/etc/init.d/mysql stop
+innobackupex --defaults-file=/etc/my.cnf --user=root --apply-log /backup/2016-07-11_15-03-07/
+innobackupex --defaults-file=/etc/my.cnf --user=root --copy-back /backup/2016-07-11_15-03-07/
+chown -R mysql.mysql /data/mysql/
+/etc/init.d/mysql start
+
+二、全量备份+增量备份+增量恢复
+--incremental-basedir	指向全备目录; 
+--incremental   		指向增量备份的目录; 
+innobackupex --defaults-file=/etc/my.cnf --user=root --password=123456  /backup
+生成目录：/backup/2016-07-11_15-03-07
+
+2.第一次增量备份：
+# innobackupex --defaults-file=/etc/my.cnf --user=root --password=123456 --incremental-basedir=/backup/2016-07-11_15-03-07 --incremental /backup/zengliang
+……略……
+innobackupex: completed OK!
+生成备份目录：/backup/zengliang/2016-07-11_15-09-37，再在phpmyadmin中新增一些库和表。
+
+3.第二次全量备份：		
+innobackupex --defaults-file=/etc/my.cnf --user=root --password=123456 --incremental-basedir=/backup/zengliang/2016-07-11_15-09-37 --incremental /backup/zengliang/
+
+生成备份目录：/backup/zengliang/2016-07-11_15-10-58/  再在phpmyadmin中新增一些库和表。
+
+模拟数据库出现问题，再恢复阶段。
+恢复数据库：
+cp -a /data/mysql/ /data/mysql_bak	
+rm -rf /data/mysql/*
+
+innobackupex --apply-log --redo-only --defaults-file=/etc/my.cnf --user=root /backup/2016-07-11_15-03-07/
+innobackupex --apply-log --redo-only --defaults-file=/etc/my.cnf --user=root /backup/2016-07-11_15-03-07/ --incremental-dir=/backup/zengliang/2016-07-11_15-09-37/
+innobackupex --apply-log --redo-only --defaults-file=/etc/my.cnf --user=root /backup/2016-07-11_15-03-07/ --incremental-dir=/backup/zengliang/2016-07-11_15-10-58/
+innobackupex --apply-log /backup/2016-07-11_15-03-07/
+innobackupex --copy-back /backup/2016-07-11_15-03-07/
+
+chown -R mysql.mysql /data/mysql/
+/etc/init.d/mysql start
+
+总结：
+二、全量备份+增量备份恢复方法：
+BASE-DIR： 指完整的全部备份目录
+INCREMENTAL-DIR-1：指第一次增量备份的目录
+INCREMENTAL-DIR-2：指第二次增量备份的目录
+
+#innobackupex --apply-log --redo-only BASE-DIR												
+#innobackupex --apply-log --redo-only BASE-DIR --incremental-dir=INCREMENTAL-DIR-1           
+#innobackupex --apply-log BASE-DIR --incremental-dir=INCREMENTAL-DIR-2                   
+#innobackupex --apply-log BASE-DIR
+#innobackupex --copy-back BASE-DIR
+
+
+
+
+
+
+
+
+
+
+参考：
+http://467754239.blog.51cto.com/4878013/1621711
+
+http://blog.51yip.com/mysql/1650.html
+
+http://www.tuicool.com/articles/2UnQ32B
