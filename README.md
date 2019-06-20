@@ -2,11 +2,7 @@
 
 基于centos6 or 7 服务器中的 Mysql/Mariadb 数据库相关内容
 
-本文中 所提到的Mysql与Mariadb相同
-
-github地址： https://github.com/funet8/MYSQL
-
-## 说明
+本文中 所提到的Mysql与Mariadb相同，[本github地址](https://github.com/funet8/MYSQL)
 
 系统：最小化安装 Centos6 or 7 (64位)
 
