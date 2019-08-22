@@ -5,14 +5,14 @@
 使用方法：
 ```
 # wget https://github.com/funet8/MYSQL/raw/master/Yum_Install_MariaDB/CentOS6_Install_MariaDB.sh
-修改变量
+修改变量-修改密码和端口
 # sh CentOS6_Install_MariaDB.sh
 ```
 centos7
 ```
 # wget https://github.com/funet8/MYSQL/raw/master/Yum_Install_MariaDB/CentOS7_Install_MariaDB.sh
-修改变量
-# sh CentOS6_Install_MariaDB.sh
+修改变量-修改密码和端口
+# sh CentOS7_Install_MariaDB.sh
 ```
 
 ### 2.使用RPM包离线安装MariaDB

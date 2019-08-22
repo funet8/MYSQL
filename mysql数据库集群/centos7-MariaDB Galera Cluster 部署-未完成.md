@@ -41,6 +41,7 @@ gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1
 enabled=0
 ```
+
 **mariadb官方镜像非常慢、非常慢。使用国内的镜像：**
 ```
 [mariadb]

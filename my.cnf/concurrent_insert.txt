@@ -1,0 +1,11 @@
+concurrent_insert
+
+show variables like "concurrent_insert";
+
+已经在my.ini配置文件中加入 concurrent_insert=2
+
+当 concurrent_insert=0时，不允许并发插入功能。
+当 concurrent_insert=1时，允许对没有洞洞的表使用并发插入，新数据位于数据文件结尾（缺省）。
+当 concurrent_insert=2时，不管表有没有洞洞，都允许在数据文件结尾并发插入。
+
+http://crx.xmspace.net/mysql_concurrent_insert.html

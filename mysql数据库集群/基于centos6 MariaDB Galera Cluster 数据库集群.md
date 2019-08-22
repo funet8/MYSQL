@@ -68,7 +68,7 @@ service mysql start
 /usr/bin/mysql_secure_installation
 ```
 
-###五、创建MariaDB Galera集群用户
+### 五、创建MariaDB Galera集群用户
 　　
 现在,我们需要创建一些用户必须能够访问数据库。
 “sst_user”是用户的数据库节点将使用状态传输到另一个数据库节点进行身份验证的快照(SST)阶段，在MariaDB-node1，MariaDB-node2，MariaDB-node3节点下操作
