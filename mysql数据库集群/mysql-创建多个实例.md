@@ -13,12 +13,14 @@ IP：192.168.1.6
 mkdir -p /home/data/mysql/{61920,61921,61922,61923,61924} 	# mysql文件目录
 mkdir -p /home/data/mysql/etc/my.cnf.d	 					# mysql配置目录
 ```
+
 2. 初始化实例
 ```
 mysql_install_db --basedir=/usr --datadir=/home/data/mysql/61920 --user=mysql
 mysql_install_db --basedir=/usr --datadir=/home/data/mysql/61921 --user=mysql
 mysql_install_db --basedir=/usr --datadir=/home/data/mysql/61922 --user=mysql
 ```
+
 3. 增加配置文件
 ```
 vi /home/data/mysql/etc/61920.cnf
@@ -47,7 +49,7 @@ skip-name-resolve
 lower_case_table_names=1
 innodb_file_per_table=1
 back_log=50
-max_connections=300
+max_connections=10000
 max_connect_errors=1000
 table_open_cache=2048
 max_allowed_packet=16M
@@ -127,6 +129,20 @@ mysqladmin -uroot  -p 123456 -S /home/data/mysql/61921/mysql61921.sock shutdown
 mysqladmin -uroot  -p 123456 -S /home/data/mysql/61922/mysql61922.sock shutdown
 ```
 
+新建用户并且设置密码
+```
+新建用户 star
+密码 123456
+
+# mysql -u root -S /home/data/mysql/61921/mysql61921.sock
+mysql>CREATE USER 'star'@'%' IDENTIFIED BY '123456';
+mysql>GRANT  all privileges ON * . * TO 'star'@'%' IDENTIFIED BY '123456';   #此命令GRANT权限没有赋予用户
+mysql>GRANT ALL PRIVILEGES ON * . * TO 'star'@'%' WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
+mysql>flush privileges;
+
+使用新用户登录
+mysql -u star -h127.0.0.1  -P 61921 -p123456
+```
 开机启动
 ```
 echo '/usr/bin/mysqld_safe --defaults-file=/home/data/mysql/etc/61920.cnf &
