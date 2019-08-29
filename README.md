@@ -27,22 +27,12 @@ ssh端口：60920
 
 ## 五、数据库备份
 
-### xtrabackup
-### [mysqldump 备份数据库](https://github.com/funet8/MYSQL/blob/master/Mysql_Shell/mysql_all_backup_mysqldump.sh)
-操作方法：
-```
-# cd /data/conf/shell/
-# wget https://raw.githubusercontent.com/funet8/MYSQL/master/Mysql_Shell/mysql_all_backup_mysqldump.sh
+[数据库备份](https://github.com/funet8/MYSQL/tree/master/mysql-%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D)
 
-# chmod +x mysql_all_backup_mysqldump.sh
-
-添加到crontab定时任务中。
-```
-
-### [mysql导出用户权限脚本](https://github.com/funet8/MYSQL/blob/master/Mysql_Shell/mysql_backup_user.sh)
 
 
 ## 六、数据库高可用方案
+
 ### [1.Mycat 数据库中间件](https://github.com/funet8/MYSQL/tree/master/High_Availability/MyCat)
 
 ### [2.MHA Keepalived](https://github.com/funet8/MYSQL/tree/master/High_Availability/MHA_Keepalived)
