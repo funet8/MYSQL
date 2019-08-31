@@ -72,8 +72,14 @@ useradd -s /sbin/nologin -g mysql -M mysql
 #安装MariaDB#########################################################################
 rpm -i ${Mariadb_File}/MariaDB*
 chown -R mysql:mysql  /var/lib/mysql
+#设置开机启动
 chkconfig mysql on
+systemctl enable mysql
+
+#启动服务
 service mysql start
+systemctl restart iptables.service
+
 
 #配置mysql#########################################################################
 mysql_secure_installation
@@ -99,11 +105,17 @@ echo "my.cnf move success"
 wget -O /data/conf/my.cnf https://raw.githubusercontent.com/funet8/MYSQL/master/my.cnf/my$MYSQL_PORY.cnf
 
 #防火墙#########################################################################
-/sbin/iptables -I INPUT -p tcp --dport $MYSQL_PORY -j ACCEPT
+iptables -A INPUT -p tcp --dport ${MYSQL_PORY} -j ACCEPT
 /etc/rc.d/init.d/iptables save
 /etc/init.d/iptables restart
 
+service iptables save
+systemctl restart iptables.service 
+systemctl enable iptables.service
+
 #/data/wwwroot/mysql_log为慢查询日志目录
 chown mysql.mysql -R /data/wwwroot/mysql_log
+
 #重启服务
 /etc/init.d/mysql restart
+systemctl restart iptables.service
