@@ -10,39 +10,39 @@ IP：192.168.1.6
 
 1.创建文件夹
 ```
-mkdir -p /home/data/mysql/{61920,61921,61922,61923,61924} 	# mysql文件目录
-mkdir -p /home/data/mysql/etc/my.cnf.d	 					# mysql配置目录
+mkdir -p /data/mysql/{61920,61921,61922,61923,61924} 	# mysql文件目录
+mkdir -p /data/mysql/etc/my.cnf.d	 					# mysql配置目录
 ```
 
 2. 初始化实例
 ```
-mysql_install_db --basedir=/usr --datadir=/home/data/mysql/61920 --user=mysql
-mysql_install_db --basedir=/usr --datadir=/home/data/mysql/61921 --user=mysql
-mysql_install_db --basedir=/usr --datadir=/home/data/mysql/61922 --user=mysql
+mysql_install_db --basedir=/usr --datadir=/data/mysql/61920 --user=mysql
+mysql_install_db --basedir=/usr --datadir=/data/mysql/61921 --user=mysql
+mysql_install_db --basedir=/usr --datadir=/data/mysql/61922 --user=mysql
 ```
 
 3. 增加配置文件
 ```
-vi /home/data/mysql/etc/61920.cnf
+vi /data/mysql/etc/61920.cnf
 填写一下：
 [client]
 port=61920
-socket=/home/data/mysql/61920/mysql61920.sock
+socket=/data/mysql/61920/mysql61920.sock
 
 [mysqld]
-datadir=/home/data/mysql/61920
+datadir=/data/mysql/61920
 port=61920
 server_id=1
-socket=/home/data/mysql/61920/mysql61920.sock
+socket=/data/mysql/61920/mysql61920.sock
 slow-query-log-file=/data/wwwroot/mysql_log/slowQuery_61920.log
 
-!includedir /home/data/mysql/etc/my.cnf.d/
+!includedir /data/mysql/etc/my.cnf.d/
 
 ```
 
 新增通用配置
 ```
-vim /home/data/mysql/etc/my.cnf.d/my.cnf
+vim /data/mysql/etc/my.cnf.d/my.cnf
 
 [mysqld]
 skip-name-resolve
@@ -108,25 +108,25 @@ open-files-limit=8192
 
 配置文件更改权限
 ```
-chown mysql.mysql -R /home/data/mysql/etc/
+chown mysql.mysql -R /data/mysql/etc/
 ```
 启动实例
 ```
-/usr/bin/mysqld_safe --defaults-file=/home/data/mysql/etc/61920.cnf &
-/usr/bin/mysqld_safe --defaults-file=/home/data/mysql/etc/61921.cnf &
-/usr/bin/mysqld_safe --defaults-file=/home/data/mysql/etc/61922.cnf &
+/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61920.cnf &
+/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61921.cnf &
+/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61922.cnf &
 ```
 进入实例
 ```
-mysql -u root -S /home/data/mysql/61920/mysql61920.sock
-mysql -u root -S /home/data/mysql/61921/mysql61921.sock
-mysql -u root -S /home/data/mysql/61922/mysql61922.sock
+mysql -u root -S /data/mysql/61920/mysql61920.sock
+mysql -u root -S /data/mysql/61921/mysql61921.sock
+mysql -u root -S /data/mysql/61922/mysql61922.sock
 ```
 关闭数据库
 ```
-mysqladmin -uroot  -p 123456 -S /home/data/mysql/61920/mysql61920.sock shutdown
-mysqladmin -uroot  -p 123456 -S /home/data/mysql/61921/mysql61921.sock shutdown
-mysqladmin -uroot  -p 123456 -S /home/data/mysql/61922/mysql61922.sock shutdown
+mysqladmin -uroot  -p 123456 -P61920 shutdown
+mysqladmin -uroot  -p 123456 -P61921 shutdown
+mysqladmin -uroot  -p 123456 -P61922 shutdown
 ```
 
 新建用户并且设置密码
@@ -134,7 +134,7 @@ mysqladmin -uroot  -p 123456 -S /home/data/mysql/61922/mysql61922.sock shutdown
 新建用户 star
 密码 123456
 
-# mysql -u root -S /home/data/mysql/61921/mysql61921.sock
+# mysql -u root -S /data/mysql/61921/mysql61921.sock
 mysql>CREATE USER 'star'@'%' IDENTIFIED BY '123456';
 mysql>GRANT  all privileges ON * . * TO 'star'@'%' IDENTIFIED BY '123456';   #此命令GRANT权限没有赋予用户
 mysql>GRANT ALL PRIVILEGES ON * . * TO 'star'@'%' WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
@@ -145,9 +145,9 @@ mysql -u star -h127.0.0.1  -P 61921 -p123456
 ```
 开机启动
 ```
-echo '/usr/bin/mysqld_safe --defaults-file=/home/data/mysql/etc/61920.cnf &
-/usr/bin/mysqld_safe --defaults-file=/home/data/mysql/etc/61921.cnf &
-/usr/bin/mysqld_safe --defaults-file=/home/data/mysql/etc/61922.cnf &' >> /etc/rc.local
+echo '/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61920.cnf &
+/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61921.cnf &
+/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61922.cnf &' >> /etc/rc.local
 ```
 是否开机启动
 ```

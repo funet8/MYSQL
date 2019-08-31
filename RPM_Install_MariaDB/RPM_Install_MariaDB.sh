@@ -26,10 +26,10 @@ mkdir -p ${Mariadb_File}
 cd ${Mariadb_File}
 if [ $Mariadb_File_yes = "0" ]
 then
-	wget http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/MariaDB-10.0.28-centos6-x86_64-server.rpm
-	wget http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/MariaDB-10.0.28-centos6-x86_64-client.rpm
-	wget http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/MariaDB-10.0.28-centos6-x86_64-common.rpm
-	wget http://yum.mariadb.org/10.0.28/centos6-amd64/rpms/MariaDB-10.0.28-centos6-x86_64-compat.rpm
+	wget http://js.funet8.com/centos_software/MariaDB-10.0.28-centos6-x86_64/MariaDB-10.0.28-centos6-x86_64-server.rpm
+	wget http://js.funet8.com/centos_software/MariaDB-10.0.28-centos6-x86_64/MariaDB-10.0.28-centos6-x86_64-client.rpm
+	wget http://js.funet8.com/centos_software/MariaDB-10.0.28-centos6-x86_64/MariaDB-10.0.28-centos6-x86_64-common.rpm
+	wget http://js.funet8.com/centos_software/MariaDB-10.0.28-centos6-x86_64//MariaDB-10.0.28-centos6-x86_64-compat.rpm
 	
 	#wget http://img.funet8.com/centos/mariadb/MariaDB-10.0.28-centos6-x86_64/MariaDB-10.0.28-centos6-x86_64-server.rpm
 	#wget http://img.funet8.com/centos/mariadb/MariaDB-10.0.28-centos6-x86_64/MariaDB-10.0.28-centos6-x86_64-client.rpm
