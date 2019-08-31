@@ -27,10 +27,10 @@ mkdir -p ${Mariadb_File}
 cd ${Mariadb_File}
 if [ $Mariadb_File_yes = "0" ]
 then
-	wget http:///js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-client.rpm
-	wget http:///js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-common.rpm
-	wget http:///js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-compat.rpm
-	wget http:///js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-server.rpm
+	wget http://js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-client.rpm
+	wget http://js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-common.rpm
+	wget http://js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-compat.rpm
+	wget http://js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-server.rpm
 fi
 
 #是否新建目录
