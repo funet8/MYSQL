@@ -5,6 +5,7 @@
 #作者：star				#########
 #
 #20170508增加my.cnf配置
+# centos7 安装 MariaDB-10.2.9
 
 MYSQL_PORY='61920' #MySQL访问端口
 Mariadb_File='/data/software/'	#Mariadb的RPM文件路径
@@ -26,10 +27,10 @@ mkdir -p ${Mariadb_File}
 cd ${Mariadb_File}
 if [ $Mariadb_File_yes = "0" ]
 then
-	wget http://js.funet8.com/centos_software/MariaDB-10.0.28-centos6-x86_64/MariaDB-10.0.28-centos6-x86_64-server.rpm
-	wget http://js.funet8.com/centos_software/MariaDB-10.0.28-centos6-x86_64/MariaDB-10.0.28-centos6-x86_64-client.rpm
-	wget http://js.funet8.com/centos_software/MariaDB-10.0.28-centos6-x86_64/MariaDB-10.0.28-centos6-x86_64-common.rpm
-	wget  http://js.funet8.com/centos_software/MariaDB-10.0.28-centos6-x86_64/MariaDB-10.0.28-centos6-x86_64-compat.rpm
+	wget http:///js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-client.rpm
+	wget http:///js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-common.rpm
+	wget http:///js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-compat.rpm
+	wget http:///js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-server.rpm
 fi
 
 #是否新建目录
@@ -51,7 +52,8 @@ then
 fi
 
 #安装依赖包#########################################################################
-yum -y install libaio perl perl-DBI perl-Module-Pluggable perl-Pod-Escapes perl-Pod-Simple perl-libs perl-version php-mysql php-gd
+yum -y install libaio perl perl-DBI perl-Module-Pluggable perl-Pod-Escapes perl-Pod-Simple perl-libs perl-version php-mysql php-gd galera lsof rsync
+yum remove -y mariadb-libs
 
 #移除所有原有的mysql软件包和配置文件#########################################################################
 yum remove -y mysql* MariaDB*
@@ -65,10 +67,12 @@ groupadd mysql
 useradd -s /sbin/nologin -g mysql -M mysql
 
 #安装MariaDB#########################################################################
-rpm -i ${Mariadb_File}/MariaDB*
+rpm -i ${Mariadb_File}/MariaDB-10.2.9-centos7-x86_64-*
 chown -R mysql:mysql  /var/lib/mysql
-chkconfig mysql on
-service mysql start
+
+systemctl enable mysql
+systemctl restart mysql
+
 
 #配置mysql#########################################################################
 mysql_secure_installation
@@ -94,11 +98,15 @@ echo "my.cnf move success"
 wget -O /data/conf/my.cnf https://raw.githubusercontent.com/funet8/MYSQL/master/my.cnf/my$MYSQL_PORY.cnf
 
 #防火墙#########################################################################
-/sbin/iptables -I INPUT -p tcp --dport $MYSQL_PORY -j ACCEPT
-/etc/rc.d/init.d/iptables save
+iptables -I INPUT -p tcp --dport $MYSQL_PORY -j ACCEPT
+
+service iptables save
+
 /etc/init.d/iptables restart
+systemctl restart iptables 
 
 #/data/wwwroot/mysql_log为慢查询日志目录
 chown mysql.mysql -R /data/wwwroot/mysql_log
+
 #重启服务
-/etc/init.d/mysql restart
+systemctl restart mysql 
