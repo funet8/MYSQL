@@ -12,6 +12,8 @@ IP：192.168.1.6
 ```
 mkdir -p /data/mysql/{61920,61921,61922,61923,61924} 	# mysql文件目录
 mkdir -p /data/mysql/etc/my.cnf.d	 					# mysql配置目录
+mkdir -p /data/wwwroot/mysql_log/
+chmod 777 -R /data/wwwroot/mysql_log/
 ```
 
 2. 初始化实例
@@ -34,7 +36,7 @@ datadir=/data/mysql/61920
 port=61920
 server_id=1
 socket=/data/mysql/61920/mysql61920.sock
-slow-query-log-file=/data/wwwroot/mysql_log/slowQuery_61920.log
+slow-query-log-file=/data/mysql/slowQuery/slowQuery_61920.log
 
 !includedir /data/mysql/etc/my.cnf.d/
 
@@ -42,7 +44,7 @@ slow-query-log-file=/data/wwwroot/mysql_log/slowQuery_61920.log
 
 新增通用配置
 ```
-vim /data/mysql/etc/my.cnf.d/my.cnf
+vi /data/mysql/etc/my.cnf.d/my.cnf
 
 [mysqld]
 skip-name-resolve
@@ -124,9 +126,9 @@ mysql -u root -S /data/mysql/61922/mysql61922.sock
 ```
 关闭数据库
 ```
-mysqladmin -uroot  -p 123456 -P61920 shutdown
-mysqladmin -uroot  -p 123456 -P61921 shutdown
-mysqladmin -uroot  -p 123456 -P61922 shutdown
+mysqladmin -uroot -p123456 -S /data/mysql/61920/mysql61920.sock shutdown
+mysqladmin -uroot -p123456 -S /data/mysql/61921/mysql61921.sock shutdown
+mysqladmin -uroot -p123456 -S /data/mysql/61921/mysql61921.sock shutdown
 ```
 
 新建用户并且设置密码
@@ -154,5 +156,10 @@ echo '/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61920.cnf &
 systemctl enable mariadb
 systemctl disable mariadb
 ```
+
+删除实例
+
+
+
 
 

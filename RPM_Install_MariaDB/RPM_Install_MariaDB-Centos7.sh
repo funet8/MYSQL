@@ -101,12 +101,10 @@ wget -O /data/conf/my.cnf https://raw.githubusercontent.com/funet8/MYSQL/master/
 iptables -I INPUT -p tcp --dport $MYSQL_PORY -j ACCEPT
 
 service iptables save
-
-/etc/init.d/iptables restart
 systemctl restart iptables 
 
 #/data/wwwroot/mysql_log为慢查询日志目录
 chown mysql.mysql -R /data/wwwroot/mysql_log
 
 #重启服务
-systemctl restart mysql 
+systemctl restart mysql
