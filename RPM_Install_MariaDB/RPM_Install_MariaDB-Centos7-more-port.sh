@@ -7,6 +7,10 @@
 #20190808增加my.cnf配置
 # centos7 安装 MariaDB-10.2.9
 
+#@@@@@@@@@@@@@@@@@@@@@@@@@
+#安装： wget https://raw.githubusercontent.com/funet8/MYSQL/master/RPM_Install_MariaDB/RPM_Install_MariaDB-Centos7-more-port.sh
+#执行：sh RPM_Install_MariaDB-Centos7-more-port.sh
+
 Mariadb_File='/data/software/'	#Mariadb的RPM文件路径
 #解锁系统文件
 chattr -i /etc/passwd
