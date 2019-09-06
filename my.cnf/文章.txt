@@ -3,3 +3,7 @@ https://www.cnblogs.com/wajika/p/6323026.html
 
 MySQL配置文件my.cnf优化详解(转) 
 http://blog.sina.com.cn/s/blog_593bf1da0100xznj.html
+
+
+MariaDB 10.2.9 Release Notes
+https://mariadb.com/kb/en/library/mariadb-1029-release-notes/

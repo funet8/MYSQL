@@ -14,22 +14,21 @@
 #MySQL多端口####################
 MYSQL_PORY='61920 61921 61922 61923 61924'
 
-#数据库目录####################
-mkdir -p /data/mysql/{61920,61921,61922,61923,61924}
-#binlog目录####################
-mkdir -p /data/mysql/mysqlbinlog/{61920,61921,61922,61923,61924}
+for  port in  $MYSQL_PORY
+do
+	#数据库目录####################
+	mkdir -p /data/mysql/$port
+	#binlog目录####################
+	mkdir -p /data/mysql/mysqlbinlog/$port
+	#初始化实例
+	mysql_install_db --basedir=/usr --datadir=/data/mysql/$port --user=mysql
+done
+
 #配置目录####################
 mkdir -p /data/mysql/etc/
 #慢查询目录和权限
 mkdir -p /data/mysql/slowQuery/
 chmod 777 -R /data/mysql/slowQuery/
-####################
-
-#初始化实例-循环
-for  port in  $MYSQL_PORY
-do
-	mysql_install_db --basedir=/usr --datadir=/data/mysql/$port --user=mysql
-done
 
 cd /data/mysql/etc/
 for  port in  $MYSQL_PORY
@@ -39,28 +38,45 @@ done
 
 chown mysql.mysql -R /data/mysql/etc/ /data/mysql/mysqlbinlog/
 
-#启动实例
+
 for  port in  $MYSQL_PORY
 do
+	#启动实例
 	/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/$port.cnf &
+	#防火墙开放端口
+	iptables -I INPUT -p tcp --dport $port -j ACCEPT
+	#开机启动
+	echo "/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/${port}.cnf &" >> /etc/rc.local
 done
 
-#防火墙开放端口
-for  port in  $MYSQL_PORY
-do
-	iptables -I INPUT -p tcp --dport $port -j ACCEPT
-done
 service iptables save
 systemctl restart iptables
 
 
-#开机启动
-for  port in  $MYSQL_PORY
-do
-	echo "/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/${port}.cnf &" >> /etc/rc.local
-done
 
 #进入实例
 #mysql -u root -S /data/mysql/61920/mysql61920.sock
+
+#新建最高权限，删除默认root用户
+#新建用户 star
+#密码 123456
+## mysql -u root -S /data/mysql/61921/mysql61921.sock
+#mysql>CREATE USER 'star'@'%' IDENTIFIED BY '123456';
+#mysql>GRANT  all privileges ON * . * TO 'star'@'%' IDENTIFIED BY '123456';   #此命令GRANT权限没有赋予用户
+#mysql>GRANT ALL PRIVILEGES ON * . * TO 'star'@'%' WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
+#mysql>flush privileges;
+#使用新用户登录
+#mysql -u star -h127.0.0.1  -P 61921 -p123456
+
+#关闭数据库
+#mysqladmin -uroot -S /data/mysql/61921/mysql61921.sock shutdown
+#mysqladmin -ustar -p123456 -S /data/mysql/61921/mysql61921.sock shutdown
+#启动数据库
+#/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61921.cnf &
+
+
+
+
+
 
 

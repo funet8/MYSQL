@@ -25,6 +25,13 @@ Mariadb_File_yes=1
 #首先先上传RPM包#########################################################################
 mkdir -p ${Mariadb_File}
 #先把rpm包上传到"/data/software/"文件夹中
+if [ $Mariadb_File_yes = "0" ]
+then
+	wget http://js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-client.rpm
+	wget http://js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-common.rpm
+	wget http://js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-compat.rpm
+	wget http://js.funet8.com/centos_software/MariaDB-10.2.9-centos7-x86_64/MariaDB-10.2.9-centos7-x86_64-server.rpm
+fi
 
 #安装依赖包#########################################################################
 yum -y install libaio perl perl-DBI perl-Module-Pluggable perl-Pod-Escapes perl-Pod-Simple perl-libs perl-version php-mysql php-gd galera lsof rsync
@@ -51,4 +58,10 @@ service iptables save
 systemctl restart iptables
 
 systemctl start mariadb
-systemctl enable mariadb
+systemctl disable mariadb
+#不使用默认的
+#systemctl enable mariadb
+
+
+
+
