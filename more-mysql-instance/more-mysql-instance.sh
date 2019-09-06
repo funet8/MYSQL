@@ -30,20 +30,38 @@ do
 done
 
 cd /data/mysql/etc/
-wget 1.sh
-
 cd /data/mysql/etc/my.cnf.d
-wget 1.sh
+for  port in  $MYSQL_PORY
+do
+	wget https://raw.githubusercontent.com/funet8/MYSQL/master/more-mysql-instance/conf/$port.cnf
+done
 
+cd /data/mysql/etc/
+wget https://raw.githubusercontent.com/funet8/MYSQL/master/more-mysql-instance/conf/my.cnf
 
 chown mysql.mysql -R /data/mysql/etc/ /data/mysql/mysqlbinlog/
 
+#启动实例
+for  port in  $MYSQL_PORY
+do
+	mysql_install_db --basedir=/usr --datadir=/data/mysql/$port --user=mysql
+done
+
+#防火墙开放端口
+for  port in  $MYSQL_PORY
+do
+	iptables -I INPUT -p tcp --dport $port -j ACCEPT
+done
+service iptables save
+systemctl restart iptables
+
+
 #开机启动
-echo '/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61920.cnf &
-/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61921.cnf &
-/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61922.cnf &
-/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61923.cnf &
-/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61924.cnf &' >> /etc/rc.local
+for  port in  $MYSQL_PORY
+do
+	echo "/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/${port}.cnf &" >> /etc/rc.local
+done
+
 
 
 

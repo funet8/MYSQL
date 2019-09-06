@@ -40,23 +40,11 @@ useradd -s /sbin/nologin -g mysql -M mysql
 #安装MariaDB#########################################################################
 rpm -ivh ${Mariadb_File}/MariaDB-10.2.9-centos7-x86_64-*
 
+
 iptables -I INPUT -p tcp --dport 3306 -j ACCEPT
 
 service iptables save
 systemctl restart iptables
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+systemctl start mariadb
+systemctl enable mariadb

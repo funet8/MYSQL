@@ -1,0 +1,20 @@
+[client]
+port=61924
+socket=/data/mysql/61924/mysql61924.sock
+
+[mysqld]
+datadir=/data/mysql/61924
+port=61924
+server_id=1
+socket=/data/mysql/61924/mysql61924.sock
+slow-query-log-file=/data/mysql/slowQuery/slowQuery_61924.log
+
+#binlog日志
+binlog_format = ROW
+log-bin                 = /data/mysql/mysqlbinlog/61924/mysql-bin
+expire_logs_days        = 7
+max_binlog_size         = 500m
+binlog_cache_size       = 4m
+max_binlog_cache_size   = 512m
+
+!includedir /data/mysql/etc/my.cnf.d/

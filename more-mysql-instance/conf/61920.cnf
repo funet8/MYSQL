@@ -7,11 +7,11 @@ datadir=/data/mysql/61920
 port=61920
 server_id=1
 socket=/data/mysql/61920/mysql61920.sock
-slow-query-log-file=/data/wwwroot/mysql_log/slowQuery_61920.log
+slow-query-log-file=/data/mysql/slowQuery/slowQuery_61920.log
 
 #binlog日志
 binlog_format = ROW
-log-bin                 = /data/mysql/mysqlbinlog/61920
+log-bin                 = /data/mysql/mysqlbinlog/61920/mysql-bin
 expire_logs_days        = 7
 max_binlog_size         = 500m
 binlog_cache_size       = 4m
