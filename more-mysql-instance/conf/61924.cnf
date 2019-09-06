@@ -5,16 +5,85 @@ socket=/data/mysql/61924/mysql61924.sock
 [mysqld]
 datadir=/data/mysql/61924
 port=61924
+
 server_id=1
 socket=/data/mysql/61924/mysql61924.sock
+
+#慢查询
+slow-query-log=1
 slow-query-log-file=/data/mysql/slowQuery/slowQuery_61924.log
+long-query-time=1 
+log-slow-admin-statements
 
 #binlog日志
-binlog_format = ROW
-log-bin                 = /data/mysql/mysqlbinlog/61924/mysql-bin
-expire_logs_days        = 7
-max_binlog_size         = 500m
-binlog_cache_size       = 4m
-max_binlog_cache_size   = 512m
+binlog_format=ROW
+log-bin=/data/mysql/mysqlbinlog/61924/mysql-bin
+expire_logs_days=10
+max_binlog_size=500m
+binlog_cache_size=4m
+max_binlog_cache_size=512m
 
-!includedir /data/mysql/etc/my.cnf.d/
+#不使用高速缓存区来存放主机名和IP地址的对应关系
+skip-host-cache
+skip-name-resolve=1
+
+#跳过外部锁定-官方解释：External-locking用于多进程条件下为MyISAM数据表进行锁定。如果你有多台服务器使用同一个数据库目录（不建议），那么每台服务器都必须开启external locking；
+skip-external-locking
+
+#用来存放索引区块的RMA值(默认设置是8M)
+key_buffer_size = 100M
+
+#客户与服务器之间交换的数据包的最大长度，这个数字至少应该大于客户程序将要处理的最大BLOB块的长度。这个选项的默认设置是1MB。
+max_allowed_packet = 1M
+
+#表文件描述符的缓存大小
+table_open_cache = 1024
+
+#connection级的参数，在每个connection第一次需要使用这个buffer的时候，一次性分配设置的内存
+sort_buffer_size = 2M
+
+#MySQL读入缓冲区大小。 16G内存设置1M
+read_buffer_size = 2M
+
+#当在排序之后,从一个已经排序好的序列中读取行时,行数据将从这个缓冲中读取来防止磁盘寻道.增高此值,可以提高很多ORDER BY的性能
+read_rnd_buffer_size = 128M
+
+# MyISAM表发生变化时重新排序所需的缓冲
+myisam_sort_buffer_size = 256M
+#服务器线程缓存这个值表示可以重新利用保存在缓存中线程的数量,当断开连接时如果缓存中还有空间,那么客户端的线程将被放到缓存中,如果线程重新被请求，那么请求将从缓存中读取,如果缓存中是空的或者是新的请求，那么这个线程将被重新创建,如果有很多新的线程，增加这个值可以改善系统性能.通过比较 Connections 和 Threads_created 状态的变量，可以看到这个变量的作用
+thread_cache_size = 300
+
+#机器的内存越来越大，人们也都习惯性的把以前有用的参数分配的值越来越大。这个参数加大后也引发了一系列问题。我们首先分析一下 query_cache_size 的工作原理：一个SELECT查询在DB中工作后，DB会把该语句缓存下来，当同样的一个SQL再次来到DB里调用时，DB在该表没发生变化的情况下把结果从缓存中返回给Client。这里有一个关建点，就是DB在利用Query_cache工作时，要求该语句涉及的表在这段时间内没有发生变更。那如果该表在发生变更时，Query_cache里的数据又怎么处理呢？首先要把Query_cache和该表相关的语句全部置为失效，然后在写入更新。那么如果Query_cache非常大，该表的查询结构又比较多，查询语句失效也慢，一个更新或是Insert就会很慢，这样看到的就是Update或是Insert怎么这么慢了。所以在数据库写入量或是更新量也比较大的系统，该参数不适合分配过大。而且在高并发，写入量大的系统，建系把该功能禁掉。
+#重点优化参数（主库 增删改-MyISAM）
+query_cache_size = 128M
+
+#MySQL允许最大连接数
+max_connections = 10000
+
+#可以允许多少个错误连接
+max_connect_errors = 1000
+
+#interactive_timeout针对交互式连接，wait_timeout针对非交互式连接。所谓的交互式连接，即在mysql_real_connect()函数中使用了CLIENT_INTERACTIVE选项。说得直白一点，通过mysql客户端连接数据库是交互式连接，通过jdbc连接数据库是非交互式连接。 
+interactive_timeout = 30
+wait_timeout = 30
+
+# 默认是 32M。如果一张临时表超出该大小，MySQL产生一个 The table tbl_name is full 形式的错误，如果你做很多高级 GROUP BY 查询，增加 tmp_table_size 值。
+tmp_table_size=600M
+max_heap_table_size=600M
+
+[mysqldump]
+quick
+max_allowed_packet = 32M
+
+[mysql]
+no-auto-rehash
+
+
+[myisamchk]
+key_buffer_size = 256M
+sort_buffer_size = 256M
+read_buffer = 2M
+write_buffer = 2M
+
+[mysqlhotcopy]
+interactive-timeout

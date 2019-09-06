@@ -19,7 +19,7 @@ mkdir -p /data/mysql/{61920,61921,61922,61923,61924}
 #binlog目录####################
 mkdir -p /data/mysql/mysqlbinlog/{61920,61921,61922,61923,61924}
 #配置目录####################
-mkdir -p /data/mysql/etc/my.cnf.d
+mkdir -p /data/mysql/etc/
 #慢查询目录和权限
 mkdir -p /data/mysql/slowQuery/
 chmod 777 -R /data/mysql/slowQuery/
@@ -36,9 +36,6 @@ for  port in  $MYSQL_PORY
 do
 	wget https://raw.githubusercontent.com/funet8/MYSQL/master/more-mysql-instance/conf/$port.cnf
 done
-
-cd /data/mysql/etc/my.cnf.d
-wget https://raw.githubusercontent.com/funet8/MYSQL/master/more-mysql-instance/conf/my.cnf
 
 chown mysql.mysql -R /data/mysql/etc/ /data/mysql/mysqlbinlog/
 
