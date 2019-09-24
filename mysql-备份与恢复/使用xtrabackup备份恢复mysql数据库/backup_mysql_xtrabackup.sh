@@ -15,7 +15,7 @@
 ##########################
 #mysql> create user 'backup_user'@'localhost' identified by '123456';     							#创建用户并设置密码
 #mysql> revoke all privileges,grant option from 'backup_user'@'localhost';							#去掉用户的所有默认权限
-#mysql> grant reload,lock tables,replication client,event on *.* to 'backup_user'@'localhost';  		#重新为用户授权
+#mysql> grant reload,lock tables,replication client,process,event on *.* to 'backup_user'@'localhost';  		#重新为用户授权
 #mysql> flush privileges;   																			#刷新使其重新授权表
 
 ##########################
@@ -39,19 +39,19 @@ INNOBACKUPEX_PATH=innobackupex  #INNOBACKUPEX的命令
 INNOBACKUPEXFULL=/usr/bin/$INNOBACKUPEX_PATH  #INNOBACKUPEX的命令路径
 
 #mysql目标服务器以及用户名和密码
-MYSQL_CMD="--host=localhost --user=backup_user --password=123456 --port=61920"
+MYSQL_CMD="--host=192.168.0.3 --user=backup_user --password=123456 --port=61920"
 
 TMPLOG="/tmp/innobackupex.log"
 MY_CNF=/etc/my.cnf 											#mysql的配置文件
 MYSQL=/usr/bin/mysql 
 MYSQL_ADMIN=/usr/bin/mysqladmin
-BACKUP_DIR=/backup/mysqlbackup 								# 备份的主目录
-#BACKUP_DIR=/data/mysql_backup
+#BACKUP_DIR=/backup/mysqlbackup 								# 备份的主目录
+BACKUP_DIR=/data/mysql_backup
 FULLBACKUP_DIR=$BACKUP_DIR/full 							# 全库备份的目录
 INCRBACKUP_DIR=$BACKUP_DIR/incre 							# 增量备份的目录
 FULLBACKUP_INTERVAL="86400" 								# 全库备份的间隔周期，时间：86400秒=24小时 
 KEEP_FULLBACKUP="1" 										# 至少保留几个全库备份
-KEEP_DAY="1440"												# 单位小时 24x60=1440（一天）
+KEEP_DAY="2880"											# 单位小时 24x60=1440（一天）
 logfiledate=backup.`date +%Y%m%d%H%M`.txt					
 #开始时间
 STARTED_TIME=`date +%s`

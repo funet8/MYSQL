@@ -23,7 +23,7 @@ centos7
 使用方法：
 ```
 wget https://raw.githubusercontent.com/funet8/MYSQL/master/RPM_Install_MariaDB/RPM_Install_MariaDB-Centos7-more-port.sh
-上传文件MariaDB-10.2.9-centos7-x86_64
+上传文件MariaDB-10.2.9-centos7-x86_64到
 sh RPM_Install_MariaDB-Centos7-more-port.sh
 ```
 #### 多端口的mysql
