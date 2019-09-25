@@ -121,14 +121,16 @@ chown mysql.mysql -R /data/mysql/etc/
 进入实例
 ```
 mysql -u root -S /data/mysql/61920/mysql61920.sock
+mysql -u yxkj_mysql -h 127.0.0.1 -P 61920 -p
+
 mysql -u root -S /data/mysql/61921/mysql61921.sock
 mysql -u root -S /data/mysql/61922/mysql61922.sock
 ```
 关闭数据库
 ```
-mysqladmin -uroot -p123456 -S /data/mysql/61920/mysql61920.sock shutdown
-mysqladmin -uroot -p123456 -S /data/mysql/61921/mysql61921.sock shutdown
-mysqladmin -uroot -p123456 -S /data/mysql/61921/mysql61921.sock shutdown
+mysqladmin -u root -h 127.0.0.1 -P 61920  -p  shutdown
+开启数据库实例：
+/usr/bin/mysqld_safe --defaults-file=/data/mysql/etc/61920.cnf &
 ```
 
 新建用户并且设置密码

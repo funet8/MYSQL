@@ -33,3 +33,6 @@ mysql -h'127.0.0.1' -u'用户' -P'端口' -p'密码' < /root/master.sql
 
 
 [mysql导出用户权限脚本](https://github.com/funet8/MYSQL/blob/master/Mysql_Shell/mysql_backup_user.sh)
+
+
+https://www.cnblogs.com/halberd-lee/p/11402041.html
